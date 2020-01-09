@@ -7,7 +7,12 @@ class HomeModule extends ChildModule {
 
   @override
   List<Router> get routers => [
-        Router('/', child: (_, args) => HomePage()),
+        Router('/',
+            child: (_, args) => AbaUi(
+                  aba: 0,
+                  mostraPiramideAdm: true,
+                  novoUsuario: false,
+                )),
       ];
 
   static Inject get to => Inject<HomeModule>.of();
