@@ -1,4 +1,4 @@
-import 'package:Projeto02/app/modules/calendario/calendario_page.dart';
+import 'package:Projeto02/app/modules/hormonios/hormonios_page.dart';
 import 'package:Projeto02/app/modules/home/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -77,7 +77,7 @@ class _AbaUiState extends State<AbaUi> {
     listTab.add(Tab(child: iconePiramideFazParte()));
     listTab.add(Tab(child: iconePiramides()));
     if (widget.mostraPiramideAdm) {
-      listWidgets.add(CalendarioPage());
+      listWidgets.add(HormoniosPage());
     }
 
     listWidgets.add(Center(
