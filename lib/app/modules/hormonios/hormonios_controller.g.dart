@@ -9,31 +9,32 @@ part of 'hormonios_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$HormoniosController on _HormoniosBase, Store {
-  final _$valueAtom = Atom(name: '_HormoniosBase.value');
+  final _$mostrarCalendarioAtom =
+      Atom(name: '_HormoniosBase.mostrarCalendario');
 
   @override
-  int get value {
-    _$valueAtom.context.enforceReadPolicy(_$valueAtom);
-    _$valueAtom.reportObserved();
-    return super.value;
+  bool get mostrarCalendario {
+    _$mostrarCalendarioAtom.context.enforceReadPolicy(_$mostrarCalendarioAtom);
+    _$mostrarCalendarioAtom.reportObserved();
+    return super.mostrarCalendario;
   }
 
   @override
-  set value(int value) {
-    _$valueAtom.context.conditionallyRunInAction(() {
-      super.value = value;
-      _$valueAtom.reportChanged();
-    }, _$valueAtom, name: '${_$valueAtom.name}_set');
+  set mostrarCalendario(bool value) {
+    _$mostrarCalendarioAtom.context.conditionallyRunInAction(() {
+      super.mostrarCalendario = value;
+      _$mostrarCalendarioAtom.reportChanged();
+    }, _$mostrarCalendarioAtom, name: '${_$mostrarCalendarioAtom.name}_set');
   }
 
   final _$_HormoniosBaseActionController =
       ActionController(name: '_HormoniosBase');
 
   @override
-  void increment() {
+  void mudarPaginaHormonios() {
     final _$actionInfo = _$_HormoniosBaseActionController.startAction();
     try {
-      return super.increment();
+      return super.mudarPaginaHormonios();
     } finally {
       _$_HormoniosBaseActionController.endAction(_$actionInfo);
     }

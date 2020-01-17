@@ -6,10 +6,10 @@ class HormoniosController = _HormoniosBase with _$HormoniosController;
 
 abstract class _HormoniosBase with Store {
   @observable
-  int value = 77;
+  bool mostrarCalendario = true;
 
   @action
-  void increment() {
-    value++;
+  void mudarPaginaHormonios() {
+    mostrarCalendario = !mostrarCalendario;
   }
 }
