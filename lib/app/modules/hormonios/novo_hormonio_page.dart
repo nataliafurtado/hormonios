@@ -1,6 +1,7 @@
 import 'package:Projeto02/app/models/avisos.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:numberpicker/numberpicker.dart';
 
@@ -27,12 +28,25 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
   ];
   int _duracao = 0;
 
+  var _lemrete = 0;
+  var _instrucoes = 0;
+
   var _avisos = [Aviso(data: '13:00', qtd: 2), Aviso(data: '14:00', qtd: 3)];
 
   // var _cidades = ['Santos', 'Porto Alegre', 'Campinas', 'Rio de Janeiro'];
   var _itemSelecionado;
   var _itemSelecionadoFrequencia = 'TODOS OS DIAS';
   String _dataInicio;
+  var _iconesRemedios = [
+    FontAwesomeIcons.capsules,
+    FontAwesomeIcons.syringe,
+    FontAwesomeIcons.tablets,
+    FontAwesomeIcons.wineBottle,
+    FontAwesomeIcons.utensilSpoon,
+    FontAwesomeIcons.prescriptionBottle,
+    FontAwesomeIcons.prescriptionBottleAlt,
+    FontAwesomeIcons.cannabis,
+  ];
 
   AlertDialog alertAcadaXHoras = AlertDialog(
     title: Text(""),
@@ -46,7 +60,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('data'),
+          title: Text('NOVO MEDICAMENTO'),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -132,6 +146,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                         onTap: () {},
                         child: Container(
                           height: 50,
+                          margin: EdgeInsets.only(left: 10),
                           child: Row(
                             children: <Widget>[
                               Text('DATA DE INÍCIO:  ',
@@ -181,7 +196,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Divider(
-                          color: Colors.black,
+                          color: Colors.grey,
                         ),
                       ),
                       DropdownButton<String>(
@@ -224,7 +239,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            'TIPO DO REMÉDIO',
+                            'TIPO DO ÍCONE',
                             style: TextStyle(
                                 color: Colors.blue,
                                 fontWeight: FontWeight.bold),
@@ -232,11 +247,333 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                         ),
                       ),
                       Container(
-                        height: 40,
+                        height: 100,
+                        // color: Colors.indigo.shade100,
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: CarouselSlider(
+                          enlargeCenterPage: true,
+                          viewportFraction: 0.5,
+                          items: _iconesRemedios.map((i) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 5.0),
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.shade50),
+                                    child: Center(
+                                      child: Icon(
+                                        i,
+                                        color: Colors.blue,
+                                        size: 40,
+                                      ),
+                                    ));
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  elevation: 2,
+                  child: Column(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            if (_instrucoes == 0) {
+                              _instrucoes = 2;
+                            } else if (_instrucoes == 2) {
+                              _instrucoes = 0;
+                            }
+                          });
+                        },
+                        child: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                // width: double.infinity,
+                                //color: Colors.yellow,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'INSTRUÇÕES',
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                //color: Colors.lightBlue,
+                                margin: EdgeInsets.only(right: 20),
+                                child: RotatedBox(
+                                    quarterTurns: _instrucoes,
+                                    child: Container(
+                                      child: Icon(
+                                        Icons.keyboard_arrow_down,
+                                        size: 30,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    )),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: _instrucoes == 0 ? 0 : 60,
+                        // color: Colors.indigo.shade100,
+                        // width: MediaQuery.of(context).size.width * 0.7,
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return alertaDosagem();
+                                },
+                              );
+                              // this._itemSelecionado = novoItemSelecionado;
+                            });
+                          },
+                          child: Container(
+                            height: 50,
+                            margin: EdgeInsets.only(left: 10),
+                            child: Row(
+                              children: <Widget>[
+                                Text('DOSAGEM :',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text(
+                                  ' APERTE PARA DEFINIR',
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Visibility(
+                        visible: _instrucoes == 0 ? false : true,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Divider(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: _instrucoes == 0 ? 0 : 60,
+                        // color: Colors.indigo.shade100,
+                        // width: MediaQuery.of(context).size.width * 0.7,
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return alertaObservacoes();
+                                },
+                              );
+                              // this._itemSelecionado = novoItemSelecionado;
+                            });
+                          },
+                          child: Container(
+                            height: 50,
+                            margin: EdgeInsets.only(left: 10),
+                            child: Row(
+                              children: <Widget>[
+                                Text('OBSERVAÇÕES : ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text(
+                                  ' APERTE PARA DEFINIR',
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  elevation: 2,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            if (_lemrete == 0) {
+                              _lemrete = 2;
+                            } else if (_lemrete == 2) {
+                              _lemrete = 0;
+                            }
+                          });
+                        },
+                        child: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                // width: double.infinity,
+                                //color: Colors.yellow,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'AVISAR ANTES QUE ACABE',
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                //color: Colors.lightBlue,
+                                margin: EdgeInsets.only(right: 20),
+                                child: RotatedBox(
+                                    quarterTurns: _lemrete,
+                                    child: Container(
+                                      child: Icon(
+                                        Icons.keyboard_arrow_down,
+                                        size: 30,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    )),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // card
+                      Container(
+                        height: 10,
+                      ),
+                      Container(
+                        height: _lemrete == 0 ? 0 : 30,
+
+                        // color: Colors.indigo.shade100,
+                        // width: MediaQuery.of(context).size.width * 0.7,
+                        child: Text(
+                            'Informe a quantidade de doses que você possui : ',
+                            style: TextStyle(fontWeight: FontWeight.normal)),
+                      ),
+                      // card
+                      Container(
+                        height: _lemrete == 0 ? 0 : 50,
+                        margin: EdgeInsets.only(left: 10),
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Quantidade nesse momento'),
+                        ),
+                      ),
+
+                      Container(
+                        height: _lemrete == 0 ? 0 : 60,
+                        // color: Colors.indigo.shade100,
+                        // width: MediaQuery.of(context).size.width * 0.7,
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return alertaObservacoes();
+                                },
+                              );
+                              // this._itemSelecionado = novoItemSelecionado;
+                            });
+                          },
+                          child: Container(
+                            height: 50,
+                            margin: EdgeInsets.only(left: 10),
+                            child: Row(
+                              children: <Widget>[
+                                Text('QUANDO ?',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text(
+                                  ' APERTE PARA DEFINIR',
+                                  // QUANDO RESTAREM XX DOSES
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
                       )
                     ],
                   ),
                 ),
+              ),
+              Container(
+                height: 20,
+              ),
+              Container(
+                height: 55,
+                margin: EdgeInsets.only(bottom: 15),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius:
+                      const BorderRadius.all(const Radius.circular(20)),
+                ),
+                // color: Colors.grey.shade300,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  child: InkWell(
+                    // splashColor: Colors.pink,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NovoHormonioPage()),
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.add_circle,
+                          color: Colors.white,
+                        ),
+                        Container(
+                          width: 20,
+                        ),
+                        Text(
+                          'ADICIONAR MEDICAMENTO',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                height: 150,
               )
             ],
           ),
@@ -421,6 +758,138 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                   color: Colors.blue,
                 ),
               )),
+        ],
+      ),
+      actions: [
+        FlatButton(
+          child: Text("Cancelar"),
+          onPressed: () {
+            setState(() {
+              _itemSelecionado = null;
+            });
+            Navigator.pop(context);
+          },
+        ),
+        FlatButton(
+          child: Text("Continar"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget alertaObservacoes() {
+    return AlertDialog(
+      title: Text(
+        "OBSERVAÇÕES",
+        style: TextStyle(color: Colors.blue),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          DropdownButton<String>(
+              isExpanded: false,
+              hint: Text('Selecione um tipo'),
+              items: _cidades.map((String dropDownStringItem) {
+                return DropdownMenuItem<String>(
+                  value: dropDownStringItem,
+                  child: Text(dropDownStringItem),
+                );
+              }).toList(),
+              onChanged: (String novoItemSelecionado) {
+                _dropDownItemSelected(novoItemSelecionado);
+                setState(() {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return alertaXvezesPorDia();
+                    },
+                  );
+                  this._itemSelecionado = novoItemSelecionado;
+                });
+              },
+              value: _itemSelecionado),
+          Container(
+            //    width: 10,
+
+            child: TextField(
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Escreva alguma instrução:'),
+            ),
+          )
+        ],
+      ),
+      actions: [
+        FlatButton(
+          child: Text("Cancelar"),
+          onPressed: () {
+            setState(() {
+              _itemSelecionado = null;
+            });
+            Navigator.pop(context);
+          },
+        ),
+        FlatButton(
+          child: Text("Continar"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget alertaDosagem() {
+    return AlertDialog(
+      title: Text(
+        "Qual a dosagem ?",
+        style: TextStyle(color: Colors.blue),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            height: 100,
+            width: 300,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Text('QUANTIDADE:'),
+                Container(
+                  width: 100,
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        border: InputBorder.none, hintText: '00,00'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            height: 100,
+            width: 300,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Text('MEDIDA:'),
+                Container(
+                  width: 100,
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'GRAMA MILIGRA ETC'),
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
       actions: [
