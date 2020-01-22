@@ -114,27 +114,24 @@ class _CalendarioPageState extends State<CalendarioPage>
 
   @override
   Widget build(BuildContext context) {
-    final hormoniosController = Provider.of<HormoniosController>(context);
+    //final hormoniosController = Provider.of<HormoniosController>(context);
 
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        Container(
-          height: 50,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: RaisedButton(
-              elevation: 10,
-              onPressed: () {},
-              child: Observer(
-                builder: (_) {
-                  return Text(
-                      'MEUS MEDICAMENTOS ${hormoniosController.mostrarCalendario}  ');
-                },
-              ),
-            ),
-          ),
-        ),
+        // Container(
+        //   height: 50,
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(8.0),
+        //     child: RaisedButton(
+        //       elevation: 10,
+        //       onPressed: () {
+        //         //    hormoniosController.mudarPaginaHormonios();
+        //       },
+        //       child: Text('MEUS MEDICAMENTOS'),
+        //     ),
+        //   ),
+        // ),
 
         _buildTableCalendarWithBuilders(),
         const SizedBox(height: 8.0),
@@ -154,10 +151,10 @@ class _CalendarioPageState extends State<CalendarioPage>
       calendarController: _calendarController,
       events: _events,
       holidays: _holidays,
-      initialCalendarFormat: CalendarFormat.month,
+      initialCalendarFormat: CalendarFormat.week,
       formatAnimation: FormatAnimation.slide,
       startingDayOfWeek: StartingDayOfWeek.sunday,
-      availableGestures: AvailableGestures.all,
+      // availableGestures: AvailableGestures.all,
       availableCalendarFormats: const {
         CalendarFormat.month: 'Mês',
         CalendarFormat.week: 'SEMANA',
@@ -178,7 +175,7 @@ class _CalendarioPageState extends State<CalendarioPage>
       ///BUILDERDS
       builders: CalendarBuilders(
         selectedDayBuilder: (context, date, _) {
-          print('11111ss');
+          //  print('11111ss');
           return FadeTransition(
             opacity: Tween(begin: 0.0, end: 1.0).animate(_animationController),
             child: Container(
@@ -209,13 +206,7 @@ class _CalendarioPageState extends State<CalendarioPage>
         },
         markersBuilder: (context, date, events, holidays) {
           final children = <Widget>[];
-          print('iiii');
-          print(
-              _holidays.containsKey(DateTime(date.year, date.month, date.day)));
-          print(date.year);
-          print(date.month);
-          print(date.day);
-          print('ffffff');
+
           if (events.isNotEmpty) {
             children.add(
               Positioned(

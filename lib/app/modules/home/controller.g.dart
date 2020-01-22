@@ -26,6 +26,23 @@ mixin _$Controller on ControllerBase, Store {
     }, _$counterAtom, name: '${_$counterAtom.name}_set');
   }
 
+  final _$mostrarPaginaAtom = Atom(name: 'ControllerBase.mostrarPagina');
+
+  @override
+  Pages get mostrarPagina {
+    _$mostrarPaginaAtom.context.enforceReadPolicy(_$mostrarPaginaAtom);
+    _$mostrarPaginaAtom.reportObserved();
+    return super.mostrarPagina;
+  }
+
+  @override
+  set mostrarPagina(Pages value) {
+    _$mostrarPaginaAtom.context.conditionallyRunInAction(() {
+      super.mostrarPagina = value;
+      _$mostrarPaginaAtom.reportChanged();
+    }, _$mostrarPaginaAtom, name: '${_$mostrarPaginaAtom.name}_set');
+  }
+
   final _$textAtom = Atom(name: 'ControllerBase.text');
 
   @override
@@ -51,6 +68,16 @@ mixin _$Controller on ControllerBase, Store {
     final _$actionInfo = _$ControllerBaseActionController.startAction();
     try {
       return super.increment();
+    } finally {
+      _$ControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void mudarPaginaHormonios() {
+    final _$actionInfo = _$ControllerBaseActionController.startAction();
+    try {
+      return super.mudarPaginaHormonios();
     } finally {
       _$ControllerBaseActionController.endAction(_$actionInfo);
     }

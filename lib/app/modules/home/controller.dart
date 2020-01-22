@@ -1,6 +1,7 @@
 import 'package:mobx/mobx.dart';
-part'controller.g.dart';
+part 'controller.g.dart';
 
+enum Pages { calendario, hormonios }
 class Controller = ControllerBase with _$Controller;
 
 abstract class ControllerBase with Store {
@@ -12,13 +13,24 @@ abstract class ControllerBase with Store {
     counter++;
   }
 
+  @observable
+  Pages mostrarPagina = Pages.calendario;
 
+  @action
+  void mudarPaginaHormonios() {
+    mostrarPagina = Pages.hormonios;
+  }
 
-   @observable
+  @action
+  void mudarPaginaCalendarios() {
+    mostrarPagina = Pages.calendario;
+  }
+
+  @observable
   String text = '';
 
   @action
   mudarTexto(String textNovo) {
-   text = textNovo;
+    text = textNovo;
   }
 }
