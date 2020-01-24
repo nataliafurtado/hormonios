@@ -1,9 +1,13 @@
 import 'package:Projeto02/app/models/avisos.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:Projeto02/app/modules/hormonios/novo_hormonio_controller.dart';
+
 import 'package:intl/intl.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:provider/provider.dart';
 
 class NovoHormonioPage extends StatefulWidget {
   @override
@@ -18,8 +22,17 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     super.initState();
   }
 
-  String nomeCidade = "";
-  var _cidades = ['A CADA X HORAS', 'X VEZES POR DIA'];
+// Horário dos avisos
+  var _tipoAviso = ['A CADA X HORAS', 'X VEZES POR DIA'];
+  String _avisoSelecionado;
+  var _aCadaXHoras = [1, 2, 3, 4, 6, 8, 12, 24];
+
+  var _qtdDose;
+  var _avisos = [];
+  int indexQtdPorHoras;
+  int indexXVezesPorDia;
+// Frequencia
+  String _dataInicio;
   var _frequencia = [
     'TODOS OS DIAS',
     'DIAS ESPECÍFICOS DA SEMANA',
@@ -27,16 +40,8 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     'CICLO RECORRENTE'
   ];
   int _duracao = 0;
-
-  var _lemrete = 0;
-  var _instrucoes = 0;
-
-  var _avisos = [Aviso(data: '13:00', qtd: 2), Aviso(data: '14:00', qtd: 3)];
-
-  // var _cidades = ['Santos', 'Porto Alegre', 'Campinas', 'Rio de Janeiro'];
-  var _itemSelecionado;
-  var _itemSelecionadoFrequencia = 'TODOS OS DIAS';
-  String _dataInicio;
+  var _frequenciaSelecionada = 'TODOS OS DIAS';
+// Tipo do icone
   var _iconesRemedios = [
     FontAwesomeIcons.capsules,
     FontAwesomeIcons.syringe,
@@ -47,17 +52,11 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     FontAwesomeIcons.prescriptionBottleAlt,
     FontAwesomeIcons.cannabis,
   ];
+// Instruções
 
-  AlertDialog alertAcadaXHoras = AlertDialog(
-    title: Text(""),
-    content: Text("Deseja continuar aprendendo Flutter ?"),
-    actions: [
-      // cancelaButton,
-      //continuaButton,
-    ],
-  );
   @override
   Widget build(BuildContext context) {
+    final controllerNovoHormonio = Provider.of<NovoHormonioController>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('NOVO MEDICAMENTO'),
@@ -85,10 +84,14 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                         ),
                       ),
                       TextField(
-                          // decoration: InputDecoration(
-                          //     border: InputBorder.none,
-                          //     hintText: 'Enter a search term'),
-                          )
+                        onChanged: (t) {
+                          controllerNovoHormonio.novoMedicamentro.nome = t;
+                          // controllerNovoHormonio.increment();
+                        },
+                        // decoration: InputDecoration(
+                        //     border: InputBorder.none,
+                        //     hintText: 'Enter a search term'),
+                      ),
                     ],
                   ),
                 ),
@@ -188,7 +191,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                               },
                               child: Text(_duracao == 0
                                   ? 'SEM DATA DE FIM'
-                                  : _duracao.toString()),
+                                  : '${_duracao.toString()} dias'),
                             )
                           ],
                         ),
@@ -218,11 +221,10 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                   //  return alertaXvezesPorDia();
                                 },
                               );
-                              this._itemSelecionadoFrequencia =
-                                  novoItemSelecionado;
+                              this._frequenciaSelecionada = novoItemSelecionado;
                             });
                           },
-                          value: _itemSelecionadoFrequencia)
+                          value: _frequenciaSelecionada)
                     ],
                   ),
                 ),
@@ -252,7 +254,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                         width: MediaQuery.of(context).size.width * 0.7,
                         child: CarouselSlider(
                           enlargeCenterPage: true,
-                          viewportFraction: 0.5,
+                          viewportFraction: 0.55,
                           items: _iconesRemedios.map((i) {
                             return Builder(
                               builder: (BuildContext context) {
@@ -281,54 +283,44 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
                   elevation: 2,
-                  child: Column(
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            if (_instrucoes == 0) {
-                              _instrucoes = 2;
-                            } else if (_instrucoes == 2) {
-                              _instrucoes = 0;
-                            }
-                          });
-                        },
-                        child: Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                // width: double.infinity,
-                                //color: Colors.yellow,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'INSTRUÇÕES',
-                                    style: TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                //color: Colors.lightBlue,
-                                margin: EdgeInsets.only(right: 20),
-                                child: RotatedBox(
-                                    quarterTurns: _instrucoes,
-                                    child: Container(
-                                      child: Icon(
-                                        Icons.keyboard_arrow_down,
-                                        size: 30,
-                                        color: Colors.grey.shade700,
-                                      ),
-                                    )),
-                              ),
-                            ],
+                  child: ConfigurableExpansionTile(
+                    animatedWidgetFollowingHeader: const Icon(
+                      Icons.expand_more,
+                      color: const Color(0xFF707070),
+                    ),
+                    headerExpanded: Flexible(
+                      child: Container(
+                        width: double.infinity,
+                        // color: Colors.yellow,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'INSTRUÇÕES',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
+                    ),
+                    header: Flexible(
+                      child: Container(
+                        width: double.infinity,
+                        // color: Colors.yellow,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'INSTRUÇÕES',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                    children: [
                       Container(
-                        height: _instrucoes == 0 ? 0 : 60,
+                        height: 60,
                         // color: Colors.indigo.shade100,
                         // width: MediaQuery.of(context).size.width * 0.7,
                         child: InkWell(
@@ -340,7 +332,6 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                   return alertaDosagem();
                                 },
                               );
-                              // this._itemSelecionado = novoItemSelecionado;
                             });
                           },
                           child: Container(
@@ -363,7 +354,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                         ),
                       ),
                       Visibility(
-                        visible: _instrucoes == 0 ? false : true,
+                        visible: true,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Divider(
@@ -372,7 +363,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                         ),
                       ),
                       Container(
-                        height: _instrucoes == 0 ? 0 : 60,
+                        height: 60,
                         // color: Colors.indigo.shade100,
                         // width: MediaQuery.of(context).size.width * 0.7,
                         child: InkWell(
@@ -384,7 +375,6 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                   return alertaObservacoes();
                                 },
                               );
-                              // this._itemSelecionado = novoItemSelecionado;
                             });
                           },
                           child: Container(
@@ -405,7 +395,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             ),
                           ),
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -414,115 +404,100 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
                   elevation: 2,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            if (_lemrete == 0) {
-                              _lemrete = 2;
-                            } else if (_lemrete == 2) {
-                              _lemrete = 0;
-                            }
-                          });
-                        },
-                        child: Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                // width: double.infinity,
-                                //color: Colors.yellow,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'AVISAR ANTES QUE ACABE',
+                  child: Container(
+                    // height: 600,
+                    child: ConfigurableExpansionTile(
+                      animatedWidgetFollowingHeader: const Icon(
+                        Icons.expand_more,
+                        color: const Color(0xFF707070),
+                      ),
+                      headerExpanded: Flexible(
+                          child: Container(
+                        width: double.infinity,
+                        // color: Colors.yellow,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'AVISAR ANTES QUE ACABE',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )),
+                      header: Flexible(
+                          child: Container(
+                        width: double.infinity,
+                        // color: Colors.yellow,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'AVISAR ANTES QUE ACABE',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )),
+                      children: [
+                        Container(
+                          height: 30,
+
+                          // color: Colors.indigo.shade100,
+                          // width: MediaQuery.of(context).size.width * 0.7,
+                          child: Text(
+                              'Informe a quantidade de doses que você possui : ',
+                              style: TextStyle(fontWeight: FontWeight.normal)),
+                        ),
+                        // card
+                        Container(
+                          height: 50,
+                          margin: EdgeInsets.only(left: 10),
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Quantidade nesse momento'),
+                          ),
+                        ),
+
+                        Container(
+                          height: 60,
+                          // color: Colors.indigo.shade100,
+                          // width: MediaQuery.of(context).size.width * 0.7,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return alertaObservacoes();
+                                  },
+                                );
+                              });
+                            },
+                            child: Container(
+                              height: 50,
+                              margin: EdgeInsets.only(left: 10),
+                              child: Row(
+                                children: <Widget>[
+                                  Text('QUANDO ?',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text(
+                                    ' APERTE PARA DEFINIR',
+                                    // QUANDO RESTAREM XX DOSES
                                     style: TextStyle(
                                         color: Colors.blue,
                                         fontWeight: FontWeight.bold),
-                                  ),
-                                ),
+                                  )
+                                ],
                               ),
-                              Container(
-                                //color: Colors.lightBlue,
-                                margin: EdgeInsets.only(right: 20),
-                                child: RotatedBox(
-                                    quarterTurns: _lemrete,
-                                    child: Container(
-                                      child: Icon(
-                                        Icons.keyboard_arrow_down,
-                                        size: 30,
-                                        color: Colors.grey.shade700,
-                                      ),
-                                    )),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // card
-                      Container(
-                        height: 10,
-                      ),
-                      Container(
-                        height: _lemrete == 0 ? 0 : 30,
-
-                        // color: Colors.indigo.shade100,
-                        // width: MediaQuery.of(context).size.width * 0.7,
-                        child: Text(
-                            'Informe a quantidade de doses que você possui : ',
-                            style: TextStyle(fontWeight: FontWeight.normal)),
-                      ),
-                      // card
-                      Container(
-                        height: _lemrete == 0 ? 0 : 50,
-                        margin: EdgeInsets.only(left: 10),
-                        child: TextField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Quantidade nesse momento'),
-                        ),
-                      ),
-
-                      Container(
-                        height: _lemrete == 0 ? 0 : 60,
-                        // color: Colors.indigo.shade100,
-                        // width: MediaQuery.of(context).size.width * 0.7,
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return alertaObservacoes();
-                                },
-                              );
-                              // this._itemSelecionado = novoItemSelecionado;
-                            });
-                          },
-                          child: Container(
-                            height: 50,
-                            margin: EdgeInsets.only(left: 10),
-                            child: Row(
-                              children: <Widget>[
-                                Text('QUANDO ?',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                Text(
-                                  ' APERTE PARA DEFINIR',
-                                  // QUANDO RESTAREM XX DOSES
-                                  style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
                             ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -588,7 +563,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
           DropdownButton<String>(
               isExpanded: false,
               hint: Text('Selecione um tipo'),
-              items: _cidades.map((String dropDownStringItem) {
+              items: _tipoAviso.map((String dropDownStringItem) {
                 return DropdownMenuItem<String>(
                   value: dropDownStringItem,
                   child: Text(dropDownStringItem),
@@ -599,20 +574,40 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 setState(() {
                   showDialog(
                     context: context,
+                    barrierDismissible: false,
                     builder: (context) {
-                      return alertaXvezesPorDia();
+                      if (novoItemSelecionado == 'X VEZES POR DIA') {
+                        return alertaXvezesPorDia();
+                      } else {
+                        return alertaACadaXHoras();
+                      }
                     },
                   );
-                  this._itemSelecionado = novoItemSelecionado;
+                  this._avisoSelecionado = novoItemSelecionado;
                 });
               },
-              value: _itemSelecionado),
+              value: _avisoSelecionado),
           Container(
             height: 20,
           ),
+          Visibility(
+            visible: _avisos.isNotEmpty,
+            child: Container(
+              height: 20,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('HORA'),
+                  Text('QTDE'),
+                ],
+              ),
+            ),
+          ),
           Container(
-            height: 100,
-            color: Colors.amberAccent.shade100,
+            height: 55.0 * _avisos.length,
+            color: Colors.grey.shade100,
             child: ListView.builder(
               itemCount: _avisos.length,
               itemBuilder: (ctx, indexAvisos) {
@@ -631,21 +626,28 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                       onTap: () {
                         _selectTime(indexAvisos);
                       },
-                      child: Container(child: Text(_avisos[indexAvisos].data))),
+                      child: Container(
+                          child: Text(
+                        _avisos[indexAvisos].hora,
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
+                      ))),
                   trailing: InkWell(
                       onTap: () {
                         setState(() {
                           showDialog(
                             context: context,
                             builder: (context) {
-                              return alertaQTDDoses();
+                              return alertaQTDDoses(indexAvisos);
                             },
                           );
                         });
                       },
                       child: Container(
                           child: Text(
-                              '${_avisos[indexAvisos].qtd.toString()} DOSE(S)'))),
+                        '${_avisos[indexAvisos].qtd.toString()} DOSE(S)',
+                        style: TextStyle(color: Colors.blue),
+                      ))),
                 );
               },
             ),
@@ -657,7 +659,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
 
   void _dropDownItemSelected(String novoItem) {
     setState(() {
-      this._itemSelecionado = novoItem;
+      this._avisoSelecionado = novoItem;
     });
   }
 
@@ -706,7 +708,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     );
   }
 
-  Widget alertaQTDDoses() {
+  Widget alertaQTDDoses(int indexAvisos) {
     return AlertDialog(
       title: Text(
         "Quantas doses ?",
@@ -728,8 +730,12 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
             height: 80,
             // width: 100,
             child: CarouselSlider(
+              initialPage: 0,
               enlargeCenterPage: true,
               viewportFraction: 0.5,
+              onPageChanged: (indexPage) {
+                _qtdDose = indexPage;
+              },
               items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) {
                 return Builder(
                   builder: (BuildContext context) {
@@ -764,15 +770,17 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
         FlatButton(
           child: Text("Cancelar"),
           onPressed: () {
-            setState(() {
-              _itemSelecionado = null;
-            });
+            setState(() {});
             Navigator.pop(context);
           },
         ),
         FlatButton(
           child: Text("Continar"),
           onPressed: () {
+            setState(() {
+              _avisos[indexAvisos].qtd = _qtdDose == null ? 1 : _qtdDose + 1;
+            });
+            _qtdDose = null;
             Navigator.pop(context);
           },
         ),
@@ -790,27 +798,27 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           DropdownButton<String>(
-              isExpanded: false,
-              hint: Text('Selecione um tipo'),
-              items: _cidades.map((String dropDownStringItem) {
-                return DropdownMenuItem<String>(
-                  value: dropDownStringItem,
-                  child: Text(dropDownStringItem),
+            isExpanded: false,
+            hint: Text('Selecione um tipo'),
+            items: _tipoAviso.map((String dropDownStringItem) {
+              return DropdownMenuItem<String>(
+                value: dropDownStringItem,
+                child: Text(dropDownStringItem),
+              );
+            }).toList(),
+            onChanged: (String novoItemSelecionado) {
+              _dropDownItemSelected(novoItemSelecionado);
+              setState(() {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return alertaXvezesPorDia();
+                  },
                 );
-              }).toList(),
-              onChanged: (String novoItemSelecionado) {
-                _dropDownItemSelected(novoItemSelecionado);
-                setState(() {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return alertaXvezesPorDia();
-                    },
-                  );
-                  this._itemSelecionado = novoItemSelecionado;
-                });
-              },
-              value: _itemSelecionado),
+              });
+            },
+            //  value:lecionado
+          ),
           Container(
             //    width: 10,
 
@@ -826,9 +834,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
         FlatButton(
           child: Text("Cancelar"),
           onPressed: () {
-            setState(() {
-              _itemSelecionado = null;
-            });
+            setState(() {});
             Navigator.pop(context);
           },
         ),
@@ -896,9 +902,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
         FlatButton(
           child: Text("Cancelar"),
           onPressed: () {
-            setState(() {
-              _itemSelecionado = null;
-            });
+            setState(() {});
             Navigator.pop(context);
           },
         ),
@@ -936,7 +940,37 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
             child: CarouselSlider(
               enlargeCenterPage: true,
               viewportFraction: 0.5,
-              items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) {
+              initialPage: 3,
+              onPageChanged: (indepassada) {
+                indexXVezesPorDia = indepassada;
+                // print(indexQtsHoras);
+              },
+              items: [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24
+              ].map((i) {
                 return Builder(
                   builder: (BuildContext context) {
                     return Container(
@@ -971,7 +1005,10 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
           child: Text("Cancelar"),
           onPressed: () {
             setState(() {
-              _itemSelecionado = null;
+              print('vrrvr');
+              indexXVezesPorDia = null;
+              _avisoSelecionado = null;
+              _avisos.clear();
             });
             Navigator.pop(context);
           },
@@ -979,6 +1016,91 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
         FlatButton(
           child: Text("Continar"),
           onPressed: () {
+            carregarAvisosPorDia();
+            indexXVezesPorDia = null;
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget alertaACadaXHoras() {
+    return AlertDialog(
+      title: Text(
+        "A cada quantas horas ?",
+        style: TextStyle(color: Colors.blue),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          RotatedBox(
+              quarterTurns: 2,
+              child: Container(
+                child: Icon(
+                  Icons.navigation,
+                  size: 20,
+                  color: Colors.blue,
+                ),
+              )),
+          Container(
+            height: 80,
+            // width: 100,
+            child: CarouselSlider(
+              enlargeCenterPage: true,
+              viewportFraction: 0.5,
+              initialPage: 3,
+              onPageChanged: (indexQtsPorHorasPassada) {
+                indexQtdPorHoras = indexQtsPorHorasPassada;
+                // print(indexQtsHoras);
+              },
+              items: _aCadaXHoras.map((i) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                        //  width: 50,
+                        //height: 40.0,
+                        margin: EdgeInsets.symmetric(horizontal: 5.0),
+                        decoration: BoxDecoration(color: Colors.grey.shade200),
+                        child: Center(
+                          child: Text(
+                            '$i',
+                            style: TextStyle(fontSize: 32.0),
+                          ),
+                        ));
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+          RotatedBox(
+              quarterTurns: 2,
+              child: Container(
+                child: Icon(
+                  Icons.swap_horiz,
+                  size: 30,
+                  color: Colors.blue,
+                ),
+              )),
+        ],
+      ),
+      actions: [
+        FlatButton(
+          child: Text("Cancelar"),
+          onPressed: () {
+            setState(() {
+              indexQtdPorHoras = null;
+              _avisoSelecionado = null;
+              _avisos.clear();
+            });
+            Navigator.pop(context);
+          },
+        ),
+        FlatButton(
+          child: Text("Continar"),
+          onPressed: () {
+            carreagarAvisosAcadaXHoras();
+            indexQtdPorHoras = null;
             Navigator.pop(context);
           },
         ),
@@ -1031,7 +1153,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     );
     if (picked != null) {
       setState(() {
-        _avisos[index].data =
+        _avisos[index].hora =
             picked.hour.toString() + ':' + picked.minute.toString();
       });
 
@@ -1057,5 +1179,28 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     }
     // blocnovoRelat.perguntasRelatoEvent
     //    .add(blocnovoRelat.perguntasRelatoController.value);
+  }
+
+  void carreagarAvisosAcadaXHoras() {
+    //print(indexQtdPorHoras);
+    int qtd = indexQtdPorHoras == null ? 4 : _aCadaXHoras[indexQtdPorHoras];
+    qtd = (24 / qtd).round();
+    _avisos.clear();
+    setState(() {
+      for (var i = 0; i < qtd; i++) {
+        _avisos.add(Aviso(hora: '13:00', qtd: 1));
+      }
+    });
+  }
+
+  void carregarAvisosPorDia() {
+    print(indexXVezesPorDia);
+    int qtd = indexXVezesPorDia == null ? 4 : indexXVezesPorDia + 1;
+    _avisos.clear();
+    setState(() {
+      for (var i = 0; i < qtd; i++) {
+        _avisos.add(Aviso(hora: '13:00', qtd: 1));
+      }
+    });
   }
 }

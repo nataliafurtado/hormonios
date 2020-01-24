@@ -84,6 +84,16 @@ mixin _$Controller on ControllerBase, Store {
   }
 
   @override
+  void mudarPaginaCalendarios() {
+    final _$actionInfo = _$ControllerBaseActionController.startAction();
+    try {
+      return super.mudarPaginaCalendarios();
+    } finally {
+      _$ControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   dynamic mudarTexto(String textNovo) {
     final _$actionInfo = _$ControllerBaseActionController.startAction();
     try {

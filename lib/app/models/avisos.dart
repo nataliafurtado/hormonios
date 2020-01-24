@@ -1,6 +1,6 @@
 class Aviso {
-  String data;
+  String hora;
   int qtd;
 
-  Aviso({this.data, this.qtd});
+  Aviso({this.hora, this.qtd});
 }

@@ -1,18 +1,13 @@
 import 'package:Projeto02/app/modules/hormonios/calendario_page.dart';
 import 'package:Projeto02/app/modules/hormonios/hormonios_page.dart';
 import 'package:Projeto02/app/modules/home/controller.dart';
-import 'package:Projeto02/app/modules/hormonios/hormonios_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 //import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flare_flutter/flare_actor.dart';
-import 'package:flare_flutter/flare_controls.dart';
 
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 enum OrderOptions { comofunciona, logout, comprar }
 
