@@ -1,13 +1,40 @@
+import 'dart:convert';
+
 import 'package:Projeto02/app/models/avisos.dart';
+import 'package:Projeto02/app/modules/hormonio/aux/alert_dialog_dosagem.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:Projeto02/app/modules/hormonio/hormonio_controller.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:Projeto02/app/modules/hormonios/novo_hormonio_controller.dart';
-
 import 'package:intl/intl.dart';
+import 'package:Projeto02/app/modules/hormonio/aux/alert_dialog_semana.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:provider/provider.dart';
+
+// class NovoHormonio extends StatefulWidget {
+//   final String title;
+//   const NovoHormonio({Key key, this.title = "Hormonio"}) : super(key: key);
+
+//   @override
+//   _NovoHormonioState createState() => _NovoHormonioState();
+// }
+
+// class _NovoHormonioState extends State<NovoHormonio> {
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(widget.title),
+//       ),
+//       body: Column(
+//         children: <Widget>[Text('controller.value.toString()')],
+//       ),
+//     );
+//   }
+// }
 
 class NovoHormonioPage extends StatefulWidget {
   @override
@@ -28,7 +55,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
   var _aCadaXHoras = [1, 2, 3, 4, 6, 8, 12, 24];
 
   var _qtdDose;
-  var _avisos = [];
+  List<Aviso> _avisos = [];
   int indexQtdPorHoras;
   int indexXVezesPorDia;
 // Frequencia
@@ -40,7 +67,9 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     'CICLO RECORRENTE'
   ];
   int _duracao = 0;
+  int _intervaloDeDias;
   var _frequenciaSelecionada = 'TODOS OS DIAS';
+  List<bool> diasDaSemana = [false, false, false, false, false, false, false];
 // Tipo do icone
   var _iconesRemedios = [
     FontAwesomeIcons.capsules,
@@ -52,11 +81,49 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     FontAwesomeIcons.prescriptionBottleAlt,
     FontAwesomeIcons.cannabis,
   ];
+  int _indexIcone;
 // Instruções
+//dosagens
+  List<String> _medidas = [
+    'g',
+    'mg',
+    'UI',
+    'mcg',
+    'mcg/ml',
+    'mEq',
+    'ml',
+    '%',
+    'mg/g',
+    'mg/cm2',
+    'mg/ml',
+    'mcg/h',
+    'Ampola',
+    'Dose',
+  ];
+// observacoes
+
+  List<String> _observacoes = [
+    'Antes das refeições',
+    'Depois das refeições',
+    'Durante as Refeiçoes',
+    'Em jejum',
+  ];
+
+  // avisar antes q acabe  reabastecimento
+  int quantidadeAntesAvisarReabastecimento;
+  int estoque;
+  String horaAvisarReabastecimento;
+  bool avisarReabastecimento = false;
+
+  final controllerNovoMedicamento = Modular.get<HormonioController>();
+
+  TextEditingController controllerNome = TextEditingController();
+  TextEditingController controllerquantidadeAntesAvisarReabastecimento =
+      TextEditingController();
+  TextEditingController controllerestoque = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final controllerNovoHormonio = Provider.of<NovoHormonioController>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('NOVO MEDICAMENTO'),
@@ -85,12 +152,12 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                       ),
                       TextField(
                         onChanged: (t) {
-                          controllerNovoHormonio.novoMedicamentro.nome = t;
+                          controllerNovoMedicamento.novoMedicamentro.nome = t;
                           // controllerNovoHormonio.increment();
                         },
-                        // decoration: InputDecoration(
-                        //     border: InputBorder.none,
-                        //     hintText: 'Enter a search term'),
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Digite aqui o medicamento'),
                       ),
                     ],
                   ),
@@ -118,7 +185,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                           ),
                         ),
                       ),
-                      criaDropDownButton()
+                      horarioDosAvisosDropDown()
                     ],
                   ),
                 ),
@@ -181,6 +248,8 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             Text('DURAÇÂO:   ',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             RaisedButton(
+                              elevation: 2,
+                              color: Colors.grey.shade200,
                               onPressed: () {
                                 showDialog(
                                   context: context,
@@ -189,9 +258,14 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                   },
                                 );
                               },
-                              child: Text(_duracao == 0
-                                  ? 'SEM DATA DE FIM'
-                                  : '${_duracao.toString()} dias'),
+                              child: Text(
+                                _duracao == 0
+                                    ? 'SEM DATA DE FIM'
+                                    : '${_duracao.toString()} dias',
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             )
                           ],
                         ),
@@ -202,29 +276,57 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                           color: Colors.grey,
                         ),
                       ),
-                      DropdownButton<String>(
-                          isExpanded: false,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          DropdownButton<String>(
+                              isExpanded: false,
 
-                          //  hint: Text('Selecione um tipo'),
-                          items: _frequencia.map((String dropDownStringItem) {
-                            return DropdownMenuItem<String>(
-                              value: dropDownStringItem,
-                              child: Text(dropDownStringItem),
-                            );
-                          }).toList(),
-                          onChanged: (String novoItemSelecionado) {
-                            _dropDownItemSelected(novoItemSelecionado);
-                            setState(() {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  //  return alertaXvezesPorDia();
-                                },
-                              );
-                              this._frequenciaSelecionada = novoItemSelecionado;
-                            });
-                          },
-                          value: _frequenciaSelecionada)
+                              //  hint: Text('Selecione um tipo'),
+                              items:
+                                  _frequencia.map((String dropDownStringItem) {
+                                return DropdownMenuItem<String>(
+                                  value: dropDownStringItem,
+                                  child: Text(dropDownStringItem),
+                                );
+                              }).toList(),
+                              onChanged: (String novoItemSelecionado) {
+                                setState(() {
+                                  this._frequenciaSelecionada =
+                                      novoItemSelecionado;
+
+                                  if (novoItemSelecionado != 'TODOS OS DIAS') {
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        if (novoItemSelecionado ==
+                                            'DIAS ESPECÍFICOS DA SEMANA') {
+                                          return AlertaDialogSemana(
+                                            diasDaSemana: diasDaSemana,
+                                            frequenciaSelecionada:
+                                                selecionarFrequeTodosOsDia,
+                                          );
+                                        } else if (novoItemSelecionado ==
+                                            'INTERVALO DE DIAS') {
+                                          return alertaIntervaloDeDias();
+                                        } else {
+                                          // return alertaDialogSemana();
+                                        }
+                                      },
+                                    );
+                                  }
+                                });
+                              },
+                              value: _frequenciaSelecionada),
+                          Text(
+                            (_intervaloDeDias == 0 || _intervaloDeDias == null)
+                                ? ''
+                                : '${_intervaloDeDias.toString()} dias',
+                            style: TextStyle(color: Colors.blue),
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -250,11 +352,14 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                       ),
                       Container(
                         height: 100,
-                        // color: Colors.indigo.shade100,
+                        //  color: Colors.indigo.shade100,
                         width: MediaQuery.of(context).size.width * 0.7,
                         child: CarouselSlider(
                           enlargeCenterPage: true,
                           viewportFraction: 0.55,
+                          onPageChanged: (indexIcone) {
+                            _indexIcone = indexIcone;
+                          },
                           items: _iconesRemedios.map((i) {
                             return Builder(
                               builder: (BuildContext context) {
@@ -334,22 +439,27 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                               );
                             });
                           },
-                          child: Container(
-                            height: 50,
-                            margin: EdgeInsets.only(left: 10),
-                            child: Row(
-                              children: <Widget>[
-                                Text('DOSAGEM :',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                Text(
-                                  ' APERTE PARA DEFINIR',
-                                  style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
+                          child: Observer(
+                            builder: (_) {
+                              return Container(
+                                height: 50,
+                                margin: EdgeInsets.only(left: 10),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text('DOSAGEM :',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    Text(
+                                      controllerNovoMedicamento.carregardosagem,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -379,17 +489,27 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                           },
                           child: Container(
                             height: 50,
+                            // width: MediaQuery.of(context).size.width * 0.7,
                             margin: EdgeInsets.only(left: 10),
                             child: Row(
                               children: <Widget>[
                                 Text('OBSERVAÇÕES : ',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
-                                Text(
-                                  ' APERTE PARA DEFINIR',
-                                  style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold),
+                                Observer(
+                                  builder: (_) {
+                                    return Expanded(
+                                      child: Text(
+                                        controllerNovoMedicamento
+                                            .carregaObservacoes,
+                                        maxLines: 4,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    );
+                                  },
                                 )
                               ],
                             ),
@@ -441,53 +561,90 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                       )),
                       children: [
                         Container(
-                          height: 30,
+                          height: 60,
+                          child: Switch(
+                            value: avisarReabastecimento,
+                            onChanged: (value) {
+                              setState(() {
+                                avisarReabastecimento = value;
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlue.shade100,
+                            activeColor: Colors.blue,
+                          ),
+                        ),
+                        Container(
+                          height: avisarReabastecimento ? 30 : 0,
 
                           // color: Colors.indigo.shade100,
                           // width: MediaQuery.of(context).size.width * 0.7,
                           child: Text(
-                              'Informe a quantidade de doses que você possui : ',
-                              style: TextStyle(fontWeight: FontWeight.normal)),
+                              'Informe a quantidade total de doses que você possui : ',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                         // card
                         Container(
-                          height: 50,
+                          height: avisarReabastecimento ? 50 : 0,
                           margin: EdgeInsets.only(left: 10),
                           child: TextField(
+                            onChanged: (t) {
+                              estoque = int.parse(t);
+                            },
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: 'Quantidade nesse momento'),
+                                hintText:
+                                    'Digite a quantidade em estoque nesse momento'),
                           ),
                         ),
 
                         Container(
-                          height: 60,
+                          height: avisarReabastecimento ? 30 : 0,
+
+                          // color: Colors.indigo.shade100,
+                          // width: MediaQuery.of(context).size.width * 0.7,
+                          child: Text('Avisar quando faltar quantas doses ?',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                        // card
+                        Container(
+                          height: avisarReabastecimento ? 50 : 0,
+                          margin: EdgeInsets.only(left: 10),
+                          child: TextField(
+                            onChanged: (t) {
+                              quantidadeAntesAvisarReabastecimento =
+                                  int.parse(t);
+                            },
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'Digite a quantidade aqui'),
+                          ),
+                        ),
+
+                        Container(
+                          height: avisarReabastecimento ? 60 : 0,
                           // color: Colors.indigo.shade100,
                           // width: MediaQuery.of(context).size.width * 0.7,
                           child: InkWell(
                             onTap: () {
-                              setState(() {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return alertaObservacoes();
-                                  },
-                                );
-                              });
+                              selectTimeAvisoReabasteciemnto();
                             },
                             child: Container(
                               height: 50,
                               margin: EdgeInsets.only(left: 10),
                               child: Row(
                                 children: <Widget>[
-                                  Text('QUANDO ?',
+                                  Text('QUANDO AVISAR ?',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
                                   Text(
-                                    ' APERTE PARA DEFINIR',
+                                    horaAvisarReabastecimento == null
+                                        ? ' APERTE PARA DEFINIR'
+                                        : '    $horaAvisarReabastecimento',
                                     // QUANDO RESTAREM XX DOSES
                                     style: TextStyle(
+                                        fontSize: 16,
                                         color: Colors.blue,
                                         fontWeight: FontWeight.bold),
                                   )
@@ -518,10 +675,23 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                   child: InkWell(
                     // splashColor: Colors.pink,
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NovoHormonioPage()),
+                      controllerNovoMedicamento.salvarNovoMedcicamento(
+                        //avisos
+                        _avisos,
+                        _dataInicio,
+                        _duracao,
+                        // freqeuncia
+                        _frequenciaSelecionada,
+                        diasDaSemana,
+                        _intervaloDeDias,
+                        // icone
+                        _indexIcone == null
+                            ? _iconesRemedios[0]
+                            : _iconesRemedios[_indexIcone],
+                        //reabastecimento
+                        estoque,
+                        quantidadeAntesAvisarReabastecimento,
+                        horaAvisarReabastecimento,
                       );
                     },
                     child: Row(
@@ -548,6 +718,14 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 ),
               ),
               Container(
+                height: 50,
+                child: RaisedButton(
+                  onPressed: () {
+                    controllerNovoMedicamento.getMedicamento();
+                  },
+                ),
+              ),
+              Container(
                 height: 150,
               )
             ],
@@ -555,7 +733,13 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
         ));
   }
 
-  criaDropDownButton() {
+  selecionarFrequeTodosOsDia() {
+    setState(() {
+      _frequenciaSelecionada = 'TODOS OS DIAS';
+    });
+  }
+
+  horarioDosAvisosDropDown() {
     return Container(
       child: Column(
         children: <Widget>[
@@ -570,7 +754,9 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 );
               }).toList(),
               onChanged: (String novoItemSelecionado) {
-                _dropDownItemSelected(novoItemSelecionado);
+                setState(() {
+                  this._avisoSelecionado = novoItemSelecionado;
+                });
                 setState(() {
                   showDialog(
                     context: context,
@@ -657,10 +843,50 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     );
   }
 
-  void _dropDownItemSelected(String novoItem) {
-    setState(() {
-      this._avisoSelecionado = novoItem;
-    });
+  Widget alertaIntervaloDeDias() {
+    return AlertDialog(
+      title: Text(
+        "A cada quantos dias ?",
+        style: TextStyle(color: Colors.blue),
+      ),
+      content: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          new NumberPicker.integer(
+              initialValue: 0,
+              highlightSelectedValue: false,
+              decoration: BoxDecoration(
+                border: Border.all(),
+              ),
+              minValue: 0,
+              maxValue: 60,
+              onChanged: (d) {
+                setState(() {
+                  _intervaloDeDias = d;
+                });
+              })
+        ],
+      ),
+      actions: [
+        FlatButton(
+          child: Text("Cancelar"),
+          onPressed: () {
+            setState(() {
+              _intervaloDeDias = 0;
+              _duracao = 0;
+            });
+            Navigator.pop(context);
+          },
+        ),
+        FlatButton(
+          child: Text("CONTINUAR"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
   }
 
   Widget carregaDuracao() {
@@ -673,7 +899,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          new NumberPicker.integer(
+          NumberPicker.integer(
               initialValue: 0,
               highlightSelectedValue: false,
               decoration: BoxDecoration(
@@ -789,131 +1015,161 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
   }
 
   Widget alertaObservacoes() {
-    return AlertDialog(
-      title: Text(
-        "OBSERVAÇÕES",
-        style: TextStyle(color: Colors.blue),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          DropdownButton<String>(
-            isExpanded: false,
-            hint: Text('Selecione um tipo'),
-            items: _tipoAviso.map((String dropDownStringItem) {
-              return DropdownMenuItem<String>(
-                value: dropDownStringItem,
-                child: Text(dropDownStringItem),
-              );
-            }).toList(),
-            onChanged: (String novoItemSelecionado) {
-              _dropDownItemSelected(novoItemSelecionado);
-              setState(() {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return alertaXvezesPorDia();
-                  },
-                );
-              });
-            },
-            //  value:lecionado
+    TextEditingController controller2 = TextEditingController(
+        text: controllerNovoMedicamento.observacaoEscrita == null
+            ? ''
+            : controllerNovoMedicamento.observacaoEscrita);
+    return Observer(
+      builder: (_) {
+        return AlertDialog(
+          title: Text(
+            "OBSERVAÇÕES",
+            style: TextStyle(color: Colors.blue),
           ),
-          Container(
-            //    width: 10,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              DropdownButton<String>(
+                isExpanded: false,
+                hint: Text('Selecione um tipo'),
+                items: _observacoes.map((String dropDownStringItem) {
+                  return DropdownMenuItem<String>(
+                    value: dropDownStringItem,
+                    child: Text(dropDownStringItem),
+                  );
+                }).toList(),
+                onChanged: (String novoItemSelecionado) {
+                  controllerNovoMedicamento.observacaoSelecionada =
+                      novoItemSelecionado;
+                },
+                value: controllerNovoMedicamento.observacaoSelecionada,
+              ),
+              Container(
+                //    width: 10,
 
-            child: TextField(
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Escreva alguma instrução:'),
+                child: TextField(
+                  controller: controller2,
+                  onChanged: (t) {
+                    controllerNovoMedicamento.observacaoEscrita = t;
+                  },
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Escreva alguma instrução:'),
+                ),
+              )
+            ],
+          ),
+          actions: [
+            FlatButton(
+              child: Text("Zerar"),
+              onPressed: () {
+                setState(() {});
+                controllerNovoMedicamento.zerarObservacao();
+                Navigator.pop(context);
+              },
             ),
-          )
-        ],
-      ),
-      actions: [
-        FlatButton(
-          child: Text("Cancelar"),
-          onPressed: () {
-            setState(() {});
-            Navigator.pop(context);
-          },
-        ),
-        FlatButton(
-          child: Text("Continar"),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
+            FlatButton(
+              child: Text("Continuar"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
   Widget alertaDosagem() {
-    return AlertDialog(
-      title: Text(
-        "Qual a dosagem ?",
-        style: TextStyle(color: Colors.blue),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            height: 100,
-            width: 300,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Text('QUANTIDADE:'),
-                Container(
-                  width: 100,
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        border: InputBorder.none, hintText: '00,00'),
+    TextEditingController controller1 = TextEditingController(
+        text: controllerNovoMedicamento.quantidadeDsagem == null
+            ? ''
+            : controllerNovoMedicamento.quantidadeDsagem.toString());
+    return Observer(builder: (_) {
+      return AlertDialog(
+        title: Text(
+          "Qual a dosagem ?",
+          style: TextStyle(color: Colors.blue),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              height: 100,
+              width: 300,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Text('QUANTIDADE:'),
+                  Container(
+                    width: 100,
+                    child: TextField(
+                      controller: controller1,
+                      keyboardType: TextInputType.number,
+                      onChanged: (t) {
+                        setState(() {
+                          controllerNovoMedicamento.quantidadeDsagem =
+                              int.parse(t);
+                        });
+                      },
+                      decoration: InputDecoration(
+                          border: InputBorder.none, hintText: '00,00'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            Container(
+              height: 100,
+              //  width: 600,
+              // color: Colors.red.shade200,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Text('MEDIDA:'),
+                  Container(
+                      //width: 30,
+                      child: DropdownButton<String>(
+                          isExpanded: false,
+                          // hint: Text(''),
+                          items: _medidas.map((String dropDownStringItem) {
+                            return DropdownMenuItem<String>(
+                              value: dropDownStringItem,
+                              child: Text(dropDownStringItem),
+                            );
+                          }).toList(),
+                          onChanged: (String novoItemSelecionado) {
+                            setState(() {
+                              controllerNovoMedicamento.medidaDOsagem =
+                                  novoItemSelecionado;
+                            });
+                          },
+                          value: controllerNovoMedicamento.medidaDOsagem)),
+                ],
+              ),
+            )
+          ],
+        ),
+        actions: [
+          FlatButton(
+            child: Text("Zerar"),
+            onPressed: () {
+              controllerNovoMedicamento.zerarDosagem();
+              // controllerNovoMedicamento.carregardosagem();
+              Navigator.pop(context);
+            },
           ),
-          Container(
-            height: 100,
-            width: 300,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Text('MEDIDA:'),
-                Container(
-                  width: 100,
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'GRAMA MILIGRA ETC'),
-                  ),
-                ),
-              ],
-            ),
-          )
+          FlatButton(
+            child: Text("Continar"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ],
-      ),
-      actions: [
-        FlatButton(
-          child: Text("Cancelar"),
-          onPressed: () {
-            setState(() {});
-            Navigator.pop(context);
-          },
-        ),
-        FlatButton(
-          child: Text("Continar"),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    );
+      );
+    });
   }
 
   Widget alertaXvezesPorDia() {
@@ -1109,7 +1365,6 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
   }
 
   Future _selectDate() async {
-    //  print(tempo[0].trim());
     DateFormat dateFormat = DateFormat("dd/MM/yyyy");
     DateTime data = DateTime.now();
     // if (tempo[0].isNotEmpty) {
@@ -1117,22 +1372,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     // }
     DateTime picked =
         await showDatePicker(context: context, initialDate: DateTime.now());
-    if (picked != null) {
-      // if (blocnovoRelat
-      //         .perguntasRelatoController.value[indexPergunta].resposta ==
-      //     null) {
-      //   blocnovoRelat
-      //           .perguntasRelatoController.value[indexPergunta].resposta =
-      //       formatDate(picked, [dd, '/', mm, '/', yyyy]) + ' : 00:00';
-      // } else {
-      //   blocnovoRelat
-      //           .perguntasRelatoController.value[indexPergunta].resposta =
-      //       formatDate(picked, [dd, '/', mm, '/', yyyy]) +
-      //           blocnovoRelat
-      //               .perguntasRelatoController.value[indexPergunta].resposta
-      //               .substring(10);
-      // }
-    }
+    if (picked != null) {}
   }
 
   Future _selectTime(int index) async {
@@ -1156,29 +1396,31 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
         _avisos[index].hora =
             picked.hour.toString() + ':' + picked.minute.toString();
       });
-
-      // if (blocnovoRelat
-      //         .perguntasRelatoController.value[indexPergunta].resposta ==
-      //     null) {
-      //   blocnovoRelat
-      //           .perguntasRelatoController.value[indexPergunta].resposta =
-      //       '00/00/0000 : ' +
-      //           picked.hour.toString() +
-      //           ':' +
-      //           picked.minute.toString();
-      // } else {
-      //   blocnovoRelat.perguntasRelatoController.value[indexPergunta]
-      //       .resposta = blocnovoRelat
-      //           .perguntasRelatoController.value[indexPergunta].resposta
-      //           .substring(0, 10) +
-      //       ' : ' +
-      //       picked.hour.toString() +
-      //       ':' +
-      //       picked.minute.toString();
-      // }
     }
-    // blocnovoRelat.perguntasRelatoEvent
-    //    .add(blocnovoRelat.perguntasRelatoController.value);
+  }
+
+  Future selectTimeAvisoReabasteciemnto() async {
+    TimeOfDay picked = await showTimePicker(
+      builder: (ctx, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child,
+        );
+      },
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    print(picked);
+    if (picked != null) {
+      setState(() {
+        horaAvisarReabastecimento =
+            picked.hour.toString() + ':' + picked.minute.toString();
+      });
+    } else {
+      setState(() {
+        horaAvisarReabastecimento = null;
+      });
+    }
   }
 
   void carreagarAvisosAcadaXHoras() {

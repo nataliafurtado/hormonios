@@ -1,14 +1,13 @@
 import 'package:Projeto02/app/models/medicamento.dart';
-import 'package:Projeto02/app/modules/hormonios/novo_hormonio_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:provider/provider.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:Projeto02/app/modules/hormonios/hormonios_controller.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:Projeto02/app/modules/hormonio/hormonio_controller.dart';
 
-class HormoniosPage extends StatefulWidget {
+class HormonioPage extends StatefulWidget {
+  final String title;
+  const HormonioPage({Key key, this.title = "Hormonio"}) : super(key: key);
   @override
-  _HormoniosPageState createState() => _HormoniosPageState();
+  _HormonioPageState createState() => _HormonioPageState();
 }
 
 // final Map<DateTime, List> _holidays = {
@@ -24,7 +23,7 @@ List<Medicamento> medicamentos = [
   Medicamento(nome: 'Acetato')
 ];
 
-class _HormoniosPageState extends State<HormoniosPage>
+class _HormonioPageState extends State<HormonioPage>
     with TickerProviderStateMixin {
   @override
   void initState() {
@@ -38,8 +37,6 @@ class _HormoniosPageState extends State<HormoniosPage>
 
   @override
   Widget build(BuildContext context) {
-    //  final hormoniosController = Provider.of<HormoniosController>(context);
-
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -104,10 +101,11 @@ class _HormoniosPageState extends State<HormoniosPage>
             child: InkWell(
               // splashColor: Colors.pink,
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NovoHormonioPage()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => NovoHormonioPage()),
+                // );
+                Modular.to.pushNamed('/novohormonio');
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
