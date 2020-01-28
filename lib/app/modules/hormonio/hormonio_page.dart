@@ -37,100 +37,103 @@ class _HormonioPageState extends State<HormonioPage>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Container(
-          // color: Colors.cyanAccent.shade100,
-          height: 300,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListView.builder(
-              itemCount: medicamentos.length,
-              itemBuilder: (ctx, index) {
-                return Card(
-                  child: Container(
-                    decoration: BoxDecoration(color: Colors.white),
-                    child: ListTile(
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10.0),
-                        leading: Container(
-                          padding: EdgeInsets.only(right: 12.0),
-                          decoration: new BoxDecoration(
-                              border: new Border(
-                                  right: new BorderSide(
-                                      width: 1.0, color: Colors.blue))),
-                          child: Icon(Icons.autorenew, color: Colors.blue),
-                        ),
-                        title: Text(
-                          medicamentos[index].nome,
-                          style: TextStyle(
-                              color: Colors.blue, fontWeight: FontWeight.bold),
-                        ),
-                        // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            // color: Colors.cyanAccent.shade100,
+            height: 300,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                itemCount: medicamentos.length,
+                itemBuilder: (ctx, index) {
+                  return Card(
+                    child: Container(
+                      decoration: BoxDecoration(color: Colors.white),
+                      child: ListTile(
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10.0),
+                          leading: Container(
+                            padding: EdgeInsets.only(right: 12.0),
+                            decoration: new BoxDecoration(
+                                border: new Border(
+                                    right: new BorderSide(
+                                        width: 1.0, color: Colors.blue))),
+                            child: Icon(Icons.autorenew, color: Colors.blue),
+                          ),
+                          title: Text(
+                            medicamentos[index].nome,
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
-                        subtitle: Row(
-                          children: <Widget>[
-                            Icon(Icons.linear_scale, color: Colors.pink),
-                            Text(" Intermediate",
-                                style: TextStyle(color: Colors.blue))
-                          ],
-                        ),
-                        trailing: Icon(Icons.keyboard_arrow_right,
-                            color: Colors.white, size: 30.0)),
-                  ),
-                  elevation: 2,
-                );
-              },
-            ),
-          ),
-        ),
-        Container(
-          height: 55,
-          margin: EdgeInsets.only(bottom: 15),
-          //width: 300,
-
-          decoration: BoxDecoration(
-            color: Colors.blue,
-            borderRadius: const BorderRadius.all(const Radius.circular(20)),
-          ),
-          // color: Colors.grey.shade300,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15),
-            child: InkWell(
-              // splashColor: Colors.pink,
-              onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => NovoHormonioPage()),
-                // );
-                Modular.to.pushNamed('/novohormonio');
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Icon(
-                    Icons.add_circle,
-                    color: Colors.white,
-                  ),
-                  Container(
-                    width: 20,
-                  ),
-                  Text(
-                    'ADICIONAR MEDICAMENTO',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                          subtitle: Row(
+                            children: <Widget>[
+                              Icon(Icons.linear_scale, color: Colors.pink),
+                              Text(" Intermediate",
+                                  style: TextStyle(color: Colors.blue))
+                            ],
+                          ),
+                          trailing: Icon(Icons.keyboard_arrow_right,
+                              color: Colors.white, size: 30.0)),
                     ),
-                  )
-                ],
+                    elevation: 2,
+                  );
+                },
               ),
             ),
           ),
-        ),
-      ],
+          Container(
+            height: 55,
+            margin: EdgeInsets.only(bottom: 15),
+            //width: 300,
+
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              borderRadius: const BorderRadius.all(const Radius.circular(20)),
+            ),
+            // color: Colors.grey.shade300,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              child: InkWell(
+                // splashColor: Colors.pink,
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => NovoHormonioPage()),
+                  // );
+                  Modular.to.pushNamed('/novohormonio');
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(
+                      Icons.add_circle,
+                      color: Colors.white,
+                    ),
+                    Container(
+                      width: 20,
+                    ),
+                    Text(
+                      'ADICIONAR MEDICAMENTO',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

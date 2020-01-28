@@ -5,6 +5,6 @@ import 'package:intl/date_symbol_data_local.dart';
 
 //void main() => runApp(ModularApp(module: AppModule()));
 void main() {
-  initializeDateFormatting()
+  initializeDateFormatting('pt')
       .then((_) => runApp(ModularApp(module: AppModule())));
 }

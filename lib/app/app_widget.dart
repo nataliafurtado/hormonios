@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:provider/provider.dart';
 
 class AppWidget extends StatelessWidget {
   @override
@@ -22,6 +21,13 @@ class AppWidget extends StatelessWidget {
         //   child:
 
         MaterialApp(
+      // localizationsDelegates: [
+      //   GlobalMaterialLocalizations.delegate,
+      //   GlobalWidgetsLocalizations.delegate,
+      // ],
+      // supportedLocales: [
+      //   const Locale('pt', 'BR'), // English
+      // ],
       navigatorKey: Modular.navigatorKey,
       title: 'Flutter Slidy',
       debugShowCheckedModeBanner: false,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Projeto02/app/helpers/dp_helper.dart';
 import 'package:Projeto02/app/models/avisos.dart';
 import 'package:Projeto02/app/modules/hormonio/aux/alert_dialog_dosagem.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -42,13 +43,17 @@ class NovoHormonioPage extends StatefulWidget {
 }
 
 class _NovoHormonioPageState extends State<NovoHormonioPage> {
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
-    _dataInicio = 'HOJE , ' +
-        DateFormat(DateFormat.YEAR_MONTH_DAY, 'pt_Br').format(DateTime.now());
     super.initState();
   }
 
+  String _alerta;
+
+// nome
+  String _nome;
 // Horário dos avisos
   var _tipoAviso = ['A CADA X HORAS', 'X VEZES POR DIA'];
   String _avisoSelecionado;
@@ -59,7 +64,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
   int indexQtdPorHoras;
   int indexXVezesPorDia;
 // Frequencia
-  String _dataInicio;
+  DateTime _dataInicio = DateTime.now();
   var _frequencia = [
     'TODOS OS DIAS',
     'DIAS ESPECÍFICOS DA SEMANA',
@@ -129,524 +134,403 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
           title: Text('NOVO MEDICAMENTO'),
         ),
         body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 2,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        width: double.infinity,
-                        // color: Colors.yellow,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'NOME DO MEDICAMENTO',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 2,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          // color: Colors.yellow,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'NOME DO MEDICAMENTO',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
-                      ),
-                      TextField(
-                        onChanged: (t) {
-                          controllerNovoMedicamento.novoMedicamentro.nome = t;
-                          // controllerNovoHormonio.increment();
-                        },
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Digite aqui o medicamento'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 2,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        width: double.infinity,
-                        // color: Colors.yellow,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'HORÁRIO DOS AVISOS',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      horarioDosAvisosDropDown()
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 2,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        width: double.infinity,
-                        // color: Colors.yellow,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'FREQUÊNCIA',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          height: 50,
-                          margin: EdgeInsets.only(left: 10),
-                          child: Row(
-                            children: <Widget>[
-                              Text('DATA DE INÍCIO:  ',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              Text(
-                                _dataInicio,
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Divider(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      Container(
-                        // width: double.infinity,
-                        //color: Colors.indigo.shade100,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text('DURAÇÂO:   ',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            RaisedButton(
-                              elevation: 2,
-                              color: Colors.grey.shade200,
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return carregaDuracao();
-                                  },
-                                );
-                              },
-                              child: Text(
-                                _duracao == 0
-                                    ? 'SEM DATA DE FIM'
-                                    : '${_duracao.toString()} dias',
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Divider(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          DropdownButton<String>(
-                              isExpanded: false,
-
-                              //  hint: Text('Selecione um tipo'),
-                              items:
-                                  _frequencia.map((String dropDownStringItem) {
-                                return DropdownMenuItem<String>(
-                                  value: dropDownStringItem,
-                                  child: Text(dropDownStringItem),
-                                );
-                              }).toList(),
-                              onChanged: (String novoItemSelecionado) {
-                                setState(() {
-                                  this._frequenciaSelecionada =
-                                      novoItemSelecionado;
-
-                                  if (novoItemSelecionado != 'TODOS OS DIAS') {
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        if (novoItemSelecionado ==
-                                            'DIAS ESPECÍFICOS DA SEMANA') {
-                                          return AlertaDialogSemana(
-                                            diasDaSemana: diasDaSemana,
-                                            frequenciaSelecionada:
-                                                selecionarFrequeTodosOsDia,
-                                          );
-                                        } else if (novoItemSelecionado ==
-                                            'INTERVALO DE DIAS') {
-                                          return alertaIntervaloDeDias();
-                                        } else {
-                                          // return alertaDialogSemana();
-                                        }
-                                      },
-                                    );
-                                  }
-                                });
-                              },
-                              value: _frequenciaSelecionada),
-                          Text(
-                            (_intervaloDeDias == 0 || _intervaloDeDias == null)
-                                ? ''
-                                : '${_intervaloDeDias.toString()} dias',
-                            style: TextStyle(color: Colors.blue),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 2,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        width: double.infinity,
-                        // color: Colors.yellow,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'TIPO DO ÍCONE',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 100,
-                        //  color: Colors.indigo.shade100,
-                        width: MediaQuery.of(context).size.width * 0.7,
-                        child: CarouselSlider(
-                          enlargeCenterPage: true,
-                          viewportFraction: 0.55,
-                          onPageChanged: (indexIcone) {
-                            _indexIcone = indexIcone;
+                        TextFormField(
+                          onChanged: (t) {
+                            _nome = t;
                           },
-                          items: _iconesRemedios.map((i) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return Container(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 5.0),
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey.shade50),
-                                    child: Center(
-                                      child: Icon(
-                                        i,
-                                        color: Colors.blue,
-                                        size: 40,
-                                      ),
-                                    ));
-                              },
-                            );
-                          }).toList(),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              String alert = 'O campo nome é obrigatório';
+                              _alerta = alert;
+                              return alert;
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Digite aqui o medicamento'),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 2,
-                  child: ConfigurableExpansionTile(
-                    animatedWidgetFollowingHeader: const Icon(
-                      Icons.expand_more,
-                      color: const Color(0xFF707070),
-                    ),
-                    headerExpanded: Flexible(
-                      child: Container(
-                        width: double.infinity,
-                        // color: Colors.yellow,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'INSTRUÇÕES',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
+                Container(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 2,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          // color: Colors.yellow,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'HORÁRIO DOS AVISOS',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
-                      ),
+                        horarioDosAvisosDropDown()
+                      ],
                     ),
-                    header: Flexible(
-                      child: Container(
-                        width: double.infinity,
-                        // color: Colors.yellow,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'INSTRUÇÕES',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 2,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          // color: Colors.yellow,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'FREQUÊNCIA',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    children: [
-                      Container(
-                        height: 60,
-                        // color: Colors.indigo.shade100,
-                        // width: MediaQuery.of(context).size.width * 0.7,
-                        child: InkWell(
+                        InkWell(
                           onTap: () {
-                            setState(() {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return alertaDosagem();
-                                },
-                              );
-                            });
-                          },
-                          child: Observer(
-                            builder: (_) {
-                              return Container(
-                                height: 50,
-                                margin: EdgeInsets.only(left: 10),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text('DOSAGEM :',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                    Text(
-                                      controllerNovoMedicamento.carregardosagem,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.bold),
-                                    )
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      Visibility(
-                        visible: true,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Divider(
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 60,
-                        // color: Colors.indigo.shade100,
-                        // width: MediaQuery.of(context).size.width * 0.7,
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return alertaObservacoes();
-                                },
-                              );
-                            });
+                            _selectDate();
                           },
                           child: Container(
                             height: 50,
-                            // width: MediaQuery.of(context).size.width * 0.7,
                             margin: EdgeInsets.only(left: 10),
                             child: Row(
                               children: <Widget>[
-                                Text('OBSERVAÇÕES : ',
+                                Text('DATA DE INÍCIO:  ',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
-                                Observer(
-                                  builder: (_) {
-                                    return Expanded(
-                                      child: Text(
-                                        controllerNovoMedicamento
-                                            .carregaObservacoes,
-                                        maxLines: 4,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.blue,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    );
-                                  },
+                                Text(
+                                  DateFormat(DateFormat.YEAR_MONTH_DAY, 'pt_Br')
+                                      .format(_dataInicio),
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold),
                                 )
                               ],
                             ),
                           ),
                         ),
-                      )
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Divider(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Container(
+                          // width: double.infinity,
+                          //color: Colors.indigo.shade100,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text('DURAÇÂO:   ',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              RaisedButton(
+                                elevation: 2,
+                                color: Colors.grey.shade200,
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return carregaDuracao();
+                                    },
+                                  );
+                                },
+                                child: Text(
+                                  _duracao == 0
+                                      ? 'SEM DATA DE FIM'
+                                      : '${_duracao.toString()} dias',
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Divider(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            DropdownButton<String>(
+                                isExpanded: false,
+
+                                //  hint: Text('Selecione um tipo'),
+                                items: _frequencia
+                                    .map((String dropDownStringItem) {
+                                  return DropdownMenuItem<String>(
+                                    value: dropDownStringItem,
+                                    child: Text(dropDownStringItem),
+                                  );
+                                }).toList(),
+                                onChanged: (String novoItemSelecionado) {
+                                  setState(() {
+                                    this._frequenciaSelecionada =
+                                        novoItemSelecionado;
+
+                                    if (novoItemSelecionado !=
+                                        'TODOS OS DIAS') {
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) {
+                                          if (novoItemSelecionado ==
+                                              'DIAS ESPECÍFICOS DA SEMANA') {
+                                            return AlertaDialogSemana(
+                                              diasDaSemana: diasDaSemana,
+                                              frequenciaSelecionada:
+                                                  selecionarFrequeTodosOsDia,
+                                            );
+                                          } else if (novoItemSelecionado ==
+                                              'INTERVALO DE DIAS') {
+                                            return alertaIntervaloDeDias();
+                                          } else {
+                                            // return alertaDialogSemana();
+                                          }
+                                        },
+                                      );
+                                    }
+                                  });
+                                },
+                                value: _frequenciaSelecionada),
+                            Text(
+                              (_intervaloDeDias == 0 ||
+                                      _intervaloDeDias == null)
+                                  ? ''
+                                  : '${_intervaloDeDias.toString()} dias',
+                              style: TextStyle(color: Colors.blue),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 2,
-                  child: Container(
-                    // height: 600,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 2,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          // color: Colors.yellow,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'TIPO DO ÍCONE',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 100,
+                          //  color: Colors.indigo.shade100,
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          child: CarouselSlider(
+                            enlargeCenterPage: true,
+                            viewportFraction: 0.55,
+                            onPageChanged: (indexIcone) {
+                              _indexIcone = indexIcone;
+                            },
+                            items: _iconesRemedios.map((i) {
+                              return Builder(
+                                builder: (BuildContext context) {
+                                  return Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 5.0),
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey.shade50),
+                                      child: Center(
+                                        child: Icon(
+                                          i,
+                                          color: Colors.blue,
+                                          size: 40,
+                                        ),
+                                      ));
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 2,
                     child: ConfigurableExpansionTile(
                       animatedWidgetFollowingHeader: const Icon(
                         Icons.expand_more,
                         color: const Color(0xFF707070),
                       ),
                       headerExpanded: Flexible(
-                          child: Container(
-                        width: double.infinity,
-                        // color: Colors.yellow,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'AVISAR ANTES QUE ACABE',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
+                        child: Container(
+                          width: double.infinity,
+                          // color: Colors.yellow,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'INSTRUÇÕES',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
-                      )),
+                      ),
                       header: Flexible(
-                          child: Container(
-                        width: double.infinity,
-                        // color: Colors.yellow,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'AVISAR ANTES QUE ACABE',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
+                        child: Container(
+                          width: double.infinity,
+                          // color: Colors.yellow,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'INSTRUÇÕES',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
-                      )),
+                      ),
                       children: [
                         Container(
                           height: 60,
-                          child: Switch(
-                            value: avisarReabastecimento,
-                            onChanged: (value) {
-                              setState(() {
-                                avisarReabastecimento = value;
-                              });
-                            },
-                            activeTrackColor: Colors.lightBlue.shade100,
-                            activeColor: Colors.blue,
-                          ),
-                        ),
-                        Container(
-                          height: avisarReabastecimento ? 30 : 0,
-
-                          // color: Colors.indigo.shade100,
-                          // width: MediaQuery.of(context).size.width * 0.7,
-                          child: Text(
-                              'Informe a quantidade total de doses que você possui : ',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                        // card
-                        Container(
-                          height: avisarReabastecimento ? 50 : 0,
-                          margin: EdgeInsets.only(left: 10),
-                          child: TextField(
-                            onChanged: (t) {
-                              estoque = int.parse(t);
-                            },
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText:
-                                    'Digite a quantidade em estoque nesse momento'),
-                          ),
-                        ),
-
-                        Container(
-                          height: avisarReabastecimento ? 30 : 0,
-
-                          // color: Colors.indigo.shade100,
-                          // width: MediaQuery.of(context).size.width * 0.7,
-                          child: Text('Avisar quando faltar quantas doses ?',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                        // card
-                        Container(
-                          height: avisarReabastecimento ? 50 : 0,
-                          margin: EdgeInsets.only(left: 10),
-                          child: TextField(
-                            onChanged: (t) {
-                              quantidadeAntesAvisarReabastecimento =
-                                  int.parse(t);
-                            },
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Digite a quantidade aqui'),
-                          ),
-                        ),
-
-                        Container(
-                          height: avisarReabastecimento ? 60 : 0,
                           // color: Colors.indigo.shade100,
                           // width: MediaQuery.of(context).size.width * 0.7,
                           child: InkWell(
                             onTap: () {
-                              selectTimeAvisoReabasteciemnto();
+                              setState(() {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return alertaDosagem();
+                                  },
+                                );
+                              });
+                            },
+                            child: Observer(
+                              builder: (_) {
+                                return Container(
+                                  height: 50,
+                                  margin: EdgeInsets.only(left: 10),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text('DOSAGEM :',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                      Text(
+                                        controllerNovoMedicamento
+                                            .carregardosagem,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                          visible: true,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 60,
+                          // color: Colors.indigo.shade100,
+                          // width: MediaQuery.of(context).size.width * 0.7,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return alertaObservacoes();
+                                  },
+                                );
+                              });
                             },
                             child: Container(
                               height: 50,
+                              // width: MediaQuery.of(context).size.width * 0.7,
                               margin: EdgeInsets.only(left: 10),
                               child: Row(
                                 children: <Widget>[
-                                  Text('QUANDO AVISAR ?',
+                                  Text('OBSERVAÇÕES : ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
-                                  Text(
-                                    horaAvisarReabastecimento == null
-                                        ? ' APERTE PARA DEFINIR'
-                                        : '    $horaAvisarReabastecimento',
-                                    // QUANDO RESTAREM XX DOSES
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.bold),
+                                  Observer(
+                                    builder: (_) {
+                                      return Expanded(
+                                        child: Text(
+                                          controllerNovoMedicamento
+                                              .carregaObservacoes,
+                                          maxLines: 4,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.blue,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      );
+                                    },
                                   )
                                 ],
                               ),
@@ -657,78 +541,228 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                     ),
                   ),
                 ),
-              ),
-              Container(
-                height: 20,
-              ),
-              Container(
-                height: 55,
-                margin: EdgeInsets.only(bottom: 15),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius:
-                      const BorderRadius.all(const Radius.circular(20)),
-                ),
-                // color: Colors.grey.shade300,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
-                  child: InkWell(
-                    // splashColor: Colors.pink,
-                    onTap: () {
-                      controllerNovoMedicamento.salvarNovoMedcicamento(
-                        //avisos
-                        _avisos,
-                        _dataInicio,
-                        _duracao,
-                        // freqeuncia
-                        _frequenciaSelecionada,
-                        diasDaSemana,
-                        _intervaloDeDias,
-                        // icone
-                        _indexIcone == null
-                            ? _iconesRemedios[0]
-                            : _iconesRemedios[_indexIcone],
-                        //reabastecimento
-                        estoque,
-                        quantidadeAntesAvisarReabastecimento,
-                        horaAvisarReabastecimento,
-                      );
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(
-                          Icons.add_circle,
-                          color: Colors.white,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    elevation: 2,
+                    child: Container(
+                      // height: 600,
+                      child: ConfigurableExpansionTile(
+                        animatedWidgetFollowingHeader: const Icon(
+                          Icons.expand_more,
+                          color: const Color(0xFF707070),
                         ),
-                        Container(
-                          width: 20,
-                        ),
-                        Text(
-                          'ADICIONAR MEDICAMENTO',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                        headerExpanded: Flexible(
+                            child: Container(
+                          width: double.infinity,
+                          // color: Colors.yellow,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'AVISAR ANTES QUE ACABE',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        )
-                      ],
+                        )),
+                        header: Flexible(
+                            child: Container(
+                          width: double.infinity,
+                          // color: Colors.yellow,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'AVISAR ANTES QUE ACABE',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        )),
+                        children: [
+                          Container(
+                            height: 60,
+                            child: Switch(
+                              value: avisarReabastecimento,
+                              onChanged: (value) {
+                                setState(() {
+                                  avisarReabastecimento = value;
+                                });
+                              },
+                              activeTrackColor: Colors.lightBlue.shade100,
+                              activeColor: Colors.blue,
+                            ),
+                          ),
+                          Container(
+                            height: avisarReabastecimento ? 30 : 0,
+
+                            // color: Colors.indigo.shade100,
+                            // width: MediaQuery.of(context).size.width * 0.7,
+                            child: Text(
+                                'Informe a quantidade total de doses que você possui : ',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                          // card
+                          Container(
+                            height: avisarReabastecimento ? 50 : 0,
+                            margin: EdgeInsets.only(left: 10),
+                            child: TextField(
+                              onChanged: (t) {
+                                estoque = int.parse(t);
+                              },
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText:
+                                      'Digite a quantidade em estoque nesse momento'),
+                            ),
+                          ),
+
+                          Container(
+                            height: avisarReabastecimento ? 30 : 0,
+
+                            // color: Colors.indigo.shade100,
+                            // width: MediaQuery.of(context).size.width * 0.7,
+                            child: Text('Avisar quando faltar quantas doses ?',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                          // card
+                          Container(
+                            height: avisarReabastecimento ? 50 : 0,
+                            margin: EdgeInsets.only(left: 10),
+                            child: TextField(
+                              onChanged: (t) {
+                                quantidadeAntesAvisarReabastecimento =
+                                    int.parse(t);
+                              },
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Digite a quantidade aqui'),
+                            ),
+                          ),
+
+                          Container(
+                            height: avisarReabastecimento ? 60 : 0,
+                            // color: Colors.indigo.shade100,
+                            // width: MediaQuery.of(context).size.width * 0.7,
+                            child: InkWell(
+                              onTap: () {
+                                selectTimeAvisoReabasteciemnto();
+                              },
+                              child: Container(
+                                height: 50,
+                                margin: EdgeInsets.only(left: 10),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text('QUANDO AVISAR ?',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    Text(
+                                      horaAvisarReabastecimento == null
+                                          ? ' APERTE PARA DEFINIR'
+                                          : '    $horaAvisarReabastecimento',
+                                      // QUANDO RESTAREM XX DOSES
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Container(
-                height: 50,
-                child: RaisedButton(
-                  onPressed: () {
-                    controllerNovoMedicamento.getMedicamento();
-                  },
+                Container(
+                  height: 20,
                 ),
-              ),
-              Container(
-                height: 150,
-              )
-            ],
+                Container(
+                  height: 55,
+                  margin: EdgeInsets.only(bottom: 15),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius:
+                        const BorderRadius.all(const Radius.circular(20)),
+                  ),
+                  // color: Colors.grey.shade300,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 15),
+                    child: InkWell(
+                      // splashColor: Colors.pink,
+                      onTap: () {
+                        if (_formKey.currentState.validate()) {
+                          if (_avisos.isEmpty) {
+                            _alerta = 'Selecione o horário dos avisos';
+                            mostrarDialogValidacao();
+                          } else if (true) {}
+                        } else {
+                          mostrarDialogValidacao();
+                        }
+                        // print('2222222');
+
+                        // bool estaValido = validarCampos();
+
+                        controllerNovoMedicamento.salvarNovoMedcicamento(
+                          //avisos
+                          _avisos,
+                          _dataInicio.toIso8601String(),
+                          _duracao,
+                          // freqeuncia
+                          _frequenciaSelecionada,
+                          diasDaSemana,
+                          _intervaloDeDias,
+                          // icone
+                          _indexIcone == null
+                              ? _iconesRemedios[0]
+                              : _iconesRemedios[_indexIcone],
+                          //reabastecimento
+                          estoque,
+                          quantidadeAntesAvisarReabastecimento,
+                          horaAvisarReabastecimento,
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            Icons.add_circle,
+                            color: Colors.white,
+                          ),
+                          Container(
+                            width: 20,
+                          ),
+                          Text(
+                            'ADICIONAR MEDICAMENTO',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // Container(
+                //   height: 50,
+                //   child: RaisedButton(
+                //     onPressed: () {
+                //       controllerNovoMedicamento.getMedicamento();
+                //     },
+                //   ),
+                // ),
+                Container(
+                  height: 150,
+                )
+              ],
+            ),
           ),
         ));
   }
@@ -1007,6 +1041,40 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
               _avisos[indexAvisos].qtd = _qtdDose == null ? 1 : _qtdDose + 1;
             });
             _qtdDose = null;
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget alertaValidacao() {
+    return AlertDialog(
+      title: Text(
+        "AVISO",
+        style: TextStyle(color: Colors.blue),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            height: 60,
+            child: Icon(
+              Icons.warning,
+              size: 30,
+              color: Colors.red,
+            ),
+          ),
+          Container(
+            height: 80,
+            child: Text(_alerta),
+          ),
+        ],
+      ),
+      actions: [
+        FlatButton(
+          child: Text("Continar"),
+          onPressed: () {
             Navigator.pop(context);
           },
         ),
@@ -1365,14 +1433,23 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
   }
 
   Future _selectDate() async {
-    DateFormat dateFormat = DateFormat("dd/MM/yyyy");
-    DateTime data = DateTime.now();
+    // DateFormat dateFormat = DateFormat("dd/MM/yyyy");
+    // DateTime data = DateTime.now();
     // if (tempo[0].isNotEmpty) {
     //   DateTime data = dateFormat.parse(tempo[0].trim());
     // }
-    DateTime picked =
-        await showDatePicker(context: context, initialDate: DateTime.now());
-    if (picked != null) {}
+    DateTime picked = await showDatePicker(
+      context: context,
+      //locale: Locale('pt'),
+      initialDate: _dataInicio,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2021),
+    );
+    if (picked != null) {
+      setState(() {
+        _dataInicio = picked;
+      });
+    }
   }
 
   Future _selectTime(int index) async {
@@ -1444,5 +1521,15 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
         _avisos.add(Aviso(hora: '13:00', qtd: 1));
       }
     });
+  }
+
+  void mostrarDialogValidacao() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return alertaValidacao();
+      },
+    );
   }
 }

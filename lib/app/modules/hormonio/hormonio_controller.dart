@@ -13,8 +13,8 @@ class HormonioController = _HormonioBase with _$HormonioController;
 abstract class _HormonioBase with Store {
   DBHelper _db = DBHelper();
 
-  @observable
-  Medicamento novoMedicamentro = Medicamento(frequencia: '21');
+  // @observable
+  // Medicamento novoMedicamentro = Medicamento(frequencia: '21');
 //instruções
 // dosagem
   @observable
@@ -27,11 +27,6 @@ abstract class _HormonioBase with Store {
   String observacaoSelecionada;
   @observable
   String observacaoEscrita;
-
-  @action
-  void increment() {
-    print(novoMedicamentro.frequencia);
-  }
 
   @computed
   String get carregaObservacoes {
@@ -69,7 +64,7 @@ abstract class _HormonioBase with Store {
     observacaoEscrita = null;
   }
 
-  void salvarNovoMedcicamento(
+  Future<void> salvarNovoMedcicamento(
       List<Aviso> avisos,
       String dataInicio,
       int duracao,
@@ -80,7 +75,7 @@ abstract class _HormonioBase with Store {
       IconData iconData,
       int estoque,
       int reabastecimentoDias,
-      String horaAvisarReabastecimento) {
+      String horaAvisarReabastecimento) async {
     //
     String diaDasemanaString = jsonEncode(diasDaSemana);
     //List list2 = jsonDecode(json);
@@ -97,8 +92,10 @@ abstract class _HormonioBase with Store {
       reabastecimentoDias: reabastecimentoDias,
     );
 
-    _db.saveMedicamento(novo);
-    print(novo.toString());
+    int id = await _db.saveMedicamento(novo);
+    await _db.saveAvisos(avisos, id);
+
+    print('swww');
   }
 
   void getMedicamento() async {

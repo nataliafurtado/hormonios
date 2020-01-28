@@ -22,23 +22,6 @@ mixin _$HormonioController on _HormonioBase, Store {
           Computed<String>(() => super.carregardosagem))
       .value;
 
-  final _$novoMedicamentroAtom = Atom(name: '_HormonioBase.novoMedicamentro');
-
-  @override
-  Medicamento get novoMedicamentro {
-    _$novoMedicamentroAtom.context.enforceReadPolicy(_$novoMedicamentroAtom);
-    _$novoMedicamentroAtom.reportObserved();
-    return super.novoMedicamentro;
-  }
-
-  @override
-  set novoMedicamentro(Medicamento value) {
-    _$novoMedicamentroAtom.context.conditionallyRunInAction(() {
-      super.novoMedicamentro = value;
-      _$novoMedicamentroAtom.reportChanged();
-    }, _$novoMedicamentroAtom, name: '${_$novoMedicamentroAtom.name}_set');
-  }
-
   final _$quantidadeDsagemAtom = Atom(name: '_HormonioBase.quantidadeDsagem');
 
   @override
@@ -112,16 +95,6 @@ mixin _$HormonioController on _HormonioBase, Store {
 
   final _$_HormonioBaseActionController =
       ActionController(name: '_HormonioBase');
-
-  @override
-  void increment() {
-    final _$actionInfo = _$_HormonioBaseActionController.startAction();
-    try {
-      return super.increment();
-    } finally {
-      _$_HormonioBaseActionController.endAction(_$actionInfo);
-    }
-  }
 
   @override
   dynamic zerarDosagem() {

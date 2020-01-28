@@ -1,6 +1,7 @@
 import 'dart:async';
 
 //import 'package:gerenciador/models/item.dart';
+import 'package:Projeto02/app/models/avisos.dart';
 import 'package:Projeto02/app/models/medicamento.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -28,6 +29,7 @@ final String frequencia = 'frequencia';
 final String avisos = 'avisos';
 final String hora = 'hora';
 final String qtd = 'qtd';
+final String medicamentoId = 'medicamentoId';
 
 class DBHelper {
   static final DBHelper _instance = DBHelper.internal();
@@ -46,7 +48,7 @@ class DBHelper {
 
   Future<Database> initDb() async {
     final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, "listas1.db");
+    final path = join(databasesPath, "listas2.db");
     // print(path);
 
     return await openDatabase(path, version: 1,
@@ -56,23 +58,25 @@ class DBHelper {
           "$intervaloDeDias INT,$dosagem TEXT,$observacoes TEXT,$estoque INT," +
           "$reabastecimentoDias INT,$horaReabasteciemnto TEXT,$frequencia TEXT)");
 
-      // await db.execute(
-      //     "CREATE TABLE $avisos($id INTEGER PRIMARY KEY, $hora TEXT," +
-      //         "$qtd INT)");
+      await db.execute(
+          "CREATE TABLE $avisos($id INTEGER PRIMARY KEY, $hora TEXT," +
+              "$qtd INT,$medicamentoId INT)");
     });
   }
 
-  Future<Medicamento> saveMedicamento(Medicamento medicamento) async {
+  Future<int> saveMedicamento(Medicamento medicamento) async {
     Database dbTrans = await db;
-    medicamento.id = await dbTrans.insert(medicamentos, medicamento.toMap());
-    return medicamento;
+    int i = await dbTrans.insert(medicamentos, medicamento.toMap());
+    return i;
   }
 
-  // Future<Item> saveItem(Item item) async {
-  //   Database dbLista = await db;
-  //   item.id = await dbLista.insert(itemsTable, item.toMap());
-  //   return item;
-  // }
+  Future<void> saveAvisos(List avisosList, int id) async {
+    Database dbTrans = await db;
+    for (Aviso a in avisosList) {
+      a.medicamentoId = id;
+      await dbTrans.insert(avisos, a.toMap());
+    }
+  }
 
   Future<Medicamento> getMedicamento(int id) async {
     Database dbTrans = await db;
