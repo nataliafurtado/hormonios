@@ -1,17 +1,13 @@
-import 'dart:convert';
-
-import 'package:Projeto02/app/helpers/dp_helper.dart';
 import 'package:Projeto02/app/models/avisos.dart';
-import 'package:Projeto02/app/modules/hormonio/aux/alert_dialog_dosagem.dart';
+import 'package:Projeto02/app/modules/hormonio/aux/alert_dialog_semana.dart';
+import 'package:Projeto02/app/modules/hormonio/hormonio_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:Projeto02/app/modules/hormonio/hormonio_controller.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:Projeto02/app/modules/hormonio/aux/alert_dialog_semana.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 // class NovoHormonio extends StatefulWidget {
@@ -65,7 +61,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
   int indexXVezesPorDia;
 // Frequencia
   DateTime _dataInicio = DateTime.now();
-  var _frequencia = [
+  List<String> frequencia = [
     'TODOS OS DIAS',
     'DIAS ESPECÍFICOS DA SEMANA',
     'INTERVALO DE DIAS',
@@ -150,7 +146,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              'NOME DO MEDICAMENTO',
+                              'NOME DO MEDICAMENTO (*)',
                               style: TextStyle(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold),
@@ -180,6 +176,244 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 Container(
                   height: 10,
                 ),
+
+                ///
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                      elevation: 2,
+                      child: ConfigurableExpansionTile(
+                        animatedWidgetFollowingHeader: const Icon(
+                          Icons.expand_more,
+                          color: const Color(0xFF707070),
+                        ),
+                        headerExpanded: Flexible(
+                          child: Container(
+                            width: double.infinity,
+                            // color: Colors.yellow,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'FREQUÊNCIA',
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
+                        header: Expanded(
+                          child: Container(
+                            // color: Colors.yellow,
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  width: double.infinity,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'FREQUÊNCIA',
+                                      style: TextStyle(
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    DropdownButton<String>(
+                                        isExpanded: false,
+
+                                        //  hint: Text('Selecione um tipo'),
+                                        items: frequencia
+                                            .map((String dropDownStringItem) {
+                                          return DropdownMenuItem<String>(
+                                            value: dropDownStringItem,
+                                            child: Text(dropDownStringItem),
+                                          );
+                                        }).toList(),
+                                        onChanged:
+                                            (String novoItemSelecionado) {
+                                          setState(() {
+                                            this._frequenciaSelecionada =
+                                                novoItemSelecionado;
+
+                                            if (novoItemSelecionado !=
+                                                'TODOS OS DIAS') {
+                                              showDialog(
+                                                barrierDismissible: false,
+                                                context: context,
+                                                builder: (context) {
+                                                  if (novoItemSelecionado ==
+                                                      'DIAS ESPECÍFICOS DA SEMANA') {
+                                                    return AlertaDialogSemana(
+                                                      diasDaSemana:
+                                                          diasDaSemana,
+                                                      frequenciaSelecionada:
+                                                          selecionarFrequeTodosOsDia,
+                                                    );
+                                                  } else if (novoItemSelecionado ==
+                                                      'INTERVALO DE DIAS') {
+                                                    return alertaIntervaloDeDias();
+                                                  } else {
+                                                    // return alertaDialogSemana();
+                                                  }
+                                                },
+                                              );
+                                            }
+                                          });
+                                        },
+                                        value: _frequenciaSelecionada),
+                                    Text(
+                                      (_intervaloDeDias == 0 ||
+                                              _intervaloDeDias == null)
+                                          ? ''
+                                          : '${_intervaloDeDias.toString()} dias',
+                                      style: TextStyle(color: Colors.blue),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              DropdownButton<String>(
+                                  isExpanded: false,
+
+                                  //  hint: Text('Selecione um tipo'),
+                                  items: frequencia
+                                      .map((String dropDownStringItem) {
+                                    return DropdownMenuItem<String>(
+                                      value: dropDownStringItem,
+                                      child: Text(dropDownStringItem),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String novoItemSelecionado) {
+                                    setState(() {
+                                      this._frequenciaSelecionada =
+                                          novoItemSelecionado;
+
+                                      if (novoItemSelecionado !=
+                                          'TODOS OS DIAS') {
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            if (novoItemSelecionado ==
+                                                'DIAS ESPECÍFICOS DA SEMANA') {
+                                              return AlertaDialogSemana(
+                                                diasDaSemana: diasDaSemana,
+                                                frequenciaSelecionada:
+                                                    selecionarFrequeTodosOsDia,
+                                              );
+                                            } else if (novoItemSelecionado ==
+                                                'INTERVALO DE DIAS') {
+                                              return alertaIntervaloDeDias();
+                                            } else {
+                                              // return alertaDialogSemana();
+                                            }
+                                          },
+                                        );
+                                      }
+                                    });
+                                  },
+                                  value: _frequenciaSelecionada),
+                              Text(
+                                (_intervaloDeDias == 0 ||
+                                        _intervaloDeDias == null)
+                                    ? ''
+                                    : '${_intervaloDeDias.toString()} dias',
+                                style: TextStyle(color: Colors.blue),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              _selectDate();
+                            },
+                            child: Container(
+                              height: 50,
+                              margin: EdgeInsets.only(left: 10),
+                              child: Row(
+                                children: <Widget>[
+                                  Text('DATA DE INÍCIO:  ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text(
+                                    DateFormat(
+                                            DateFormat.YEAR_MONTH_DAY, 'pt_Br')
+                                        .format(_dataInicio),
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Divider(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Container(
+                            // width: double.infinity,
+                            //color: Colors.indigo.shade100,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text('DURAÇÂO:   ',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                RaisedButton(
+                                  elevation: 2,
+                                  color: Colors.grey.shade200,
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return carregaDuracao();
+                                      },
+                                    );
+                                  },
+                                  child: Text(
+                                    _duracao == 0
+                                        ? 'SEM DATA DE FIM'
+                                        : '${_duracao.toString()} dias',
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 10,
+                          )
+                        ],
+                      )
+
+                      //
+
+                      //
+                      ),
+                ),
+
+//
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
@@ -192,7 +426,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              'HORÁRIO DOS AVISOS',
+                              'HORÁRIO DOS AVISOS (*)',
                               style: TextStyle(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold),
@@ -206,150 +440,6 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 ),
                 Container(
                   height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    elevation: 2,
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          width: double.infinity,
-                          // color: Colors.yellow,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'FREQUÊNCIA',
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            _selectDate();
-                          },
-                          child: Container(
-                            height: 50,
-                            margin: EdgeInsets.only(left: 10),
-                            child: Row(
-                              children: <Widget>[
-                                Text('DATA DE INÍCIO:  ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                Text(
-                                  DateFormat(DateFormat.YEAR_MONTH_DAY, 'pt_Br')
-                                      .format(_dataInicio),
-                                  style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Divider(
-                            color: Colors.grey,
-                          ),
-                        ),
-                        Container(
-                          // width: double.infinity,
-                          //color: Colors.indigo.shade100,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text('DURAÇÂO:   ',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              RaisedButton(
-                                elevation: 2,
-                                color: Colors.grey.shade200,
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return carregaDuracao();
-                                    },
-                                  );
-                                },
-                                child: Text(
-                                  _duracao == 0
-                                      ? 'SEM DATA DE FIM'
-                                      : '${_duracao.toString()} dias',
-                                  style: TextStyle(
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Divider(
-                            color: Colors.grey,
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            DropdownButton<String>(
-                                isExpanded: false,
-
-                                //  hint: Text('Selecione um tipo'),
-                                items: _frequencia
-                                    .map((String dropDownStringItem) {
-                                  return DropdownMenuItem<String>(
-                                    value: dropDownStringItem,
-                                    child: Text(dropDownStringItem),
-                                  );
-                                }).toList(),
-                                onChanged: (String novoItemSelecionado) {
-                                  setState(() {
-                                    this._frequenciaSelecionada =
-                                        novoItemSelecionado;
-
-                                    if (novoItemSelecionado !=
-                                        'TODOS OS DIAS') {
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) {
-                                          if (novoItemSelecionado ==
-                                              'DIAS ESPECÍFICOS DA SEMANA') {
-                                            return AlertaDialogSemana(
-                                              diasDaSemana: diasDaSemana,
-                                              frequenciaSelecionada:
-                                                  selecionarFrequeTodosOsDia,
-                                            );
-                                          } else if (novoItemSelecionado ==
-                                              'INTERVALO DE DIAS') {
-                                            return alertaIntervaloDeDias();
-                                          } else {
-                                            // return alertaDialogSemana();
-                                          }
-                                        },
-                                      );
-                                    }
-                                  });
-                                },
-                                value: _frequenciaSelecionada),
-                            Text(
-                              (_intervaloDeDias == 0 ||
-                                      _intervaloDeDias == null)
-                                  ? ''
-                                  : '${_intervaloDeDias.toString()} dias',
-                              style: TextStyle(color: Colors.blue),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -408,7 +498,10 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
                     elevation: 2,
-                    child: ConfigurableExpansionTile(
+                    child:
+
+                        //
+                        ConfigurableExpansionTile(
                       animatedWidgetFollowingHeader: const Icon(
                         Icons.expand_more,
                         color: const Color(0xFF707070),
@@ -656,7 +749,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                 margin: EdgeInsets.only(left: 10),
                                 child: Row(
                                   children: <Widget>[
-                                    Text('QUANDO AVISAR ?',
+                                    Text('QUE HORAS AVISAR ?',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
                                     Text(
@@ -700,32 +793,13 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                           if (_avisos.isEmpty) {
                             _alerta = 'Selecione o horário dos avisos';
                             mostrarDialogValidacao();
-                          } else if (true) {}
+                          } else {
+                            salvar();
+                            Modular.to.pushNamed('/');
+                          }
                         } else {
                           mostrarDialogValidacao();
                         }
-                        // print('2222222');
-
-                        // bool estaValido = validarCampos();
-
-                        controllerNovoMedicamento.salvarNovoMedcicamento(
-                          //avisos
-                          _avisos,
-                          _dataInicio.toIso8601String(),
-                          _duracao,
-                          // freqeuncia
-                          _frequenciaSelecionada,
-                          diasDaSemana,
-                          _intervaloDeDias,
-                          // icone
-                          _indexIcone == null
-                              ? _iconesRemedios[0]
-                              : _iconesRemedios[_indexIcone],
-                          //reabastecimento
-                          estoque,
-                          quantidadeAntesAvisarReabastecimento,
-                          horaAvisarReabastecimento,
-                        );
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -765,6 +839,27 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
             ),
           ),
         ));
+  }
+
+  Future<void> salvar() {
+    return controllerNovoMedicamento.salvarNovoMedcicamento(
+        _nome,
+        _avisos,
+        _dataInicio,
+        _duracao,
+
+        // freqeuncia
+        _frequenciaSelecionada,
+        diasDaSemana,
+        _intervaloDeDias,
+        // icone
+        _indexIcone == null ? _iconesRemedios[0] : _iconesRemedios[_indexIcone],
+        //
+        //reabastecimento
+        estoque,
+        quantidadeAntesAvisarReabastecimento,
+        horaAvisarReabastecimento,
+        avisarReabastecimento);
   }
 
   selecionarFrequeTodosOsDia() {
@@ -1035,7 +1130,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
           },
         ),
         FlatButton(
-          child: Text("Continar"),
+          child: Text("Continuar"),
           onPressed: () {
             setState(() {
               _avisos[indexAvisos].qtd = _qtdDose == null ? 1 : _qtdDose + 1;
@@ -1073,7 +1168,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
       ),
       actions: [
         FlatButton(
-          child: Text("Continar"),
+          child: Text("Continuar"),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -1230,7 +1325,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
             },
           ),
           FlatButton(
-            child: Text("Continar"),
+            child: Text("Continuar"),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -1338,7 +1433,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
           },
         ),
         FlatButton(
-          child: Text("Continar"),
+          child: Text("Continuar"),
           onPressed: () {
             carregarAvisosPorDia();
             indexXVezesPorDia = null;
@@ -1421,7 +1516,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
           },
         ),
         FlatButton(
-          child: Text("Continar"),
+          child: Text("Continuar"),
           onPressed: () {
             carreagarAvisosAcadaXHoras();
             indexQtdPorHoras = null;

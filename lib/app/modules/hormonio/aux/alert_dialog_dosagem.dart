@@ -104,7 +104,7 @@
 //           },
 //         ),
 //         FlatButton(
-//           child: Text("Continar"),
+//           child: Text("continuar"),
 //           onPressed: () {
 //             print(widget.quantidade);
 //             widget.carregarDosagem();

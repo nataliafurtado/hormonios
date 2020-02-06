@@ -7,14 +7,16 @@ class Medicamento {
   List<Aviso> avisos;
   String dataInicio;
   String dataFim;
-  String icone;
-  String diasDasemana;
-  int intervaloDeDias;
-  String dosagem;
+  int icone;
+  // String diasDasemana;
+  //int intervaloDeDias;
+  int dosagem;
+  String medida;
   String observacoes;
   int estoque;
-  int reabastecimentoDias;
+  int quantidadeAntesAvisarReabastecimento;
   String horaReabasteciemnto;
+  bool avisarReabastecimento;
   String frequencia;
 
   Medicamento(
@@ -25,30 +27,49 @@ class Medicamento {
       this.dataInicio,
       this.dataFim,
       this.icone,
-      this.diasDasemana,
-      this.intervaloDeDias,
+      // this.diasDasemana,
+      // this.intervaloDeDias,
       this.dosagem,
+      this.medida,
       this.observacoes,
       this.estoque,
-      this.reabastecimentoDias,
+      this.quantidadeAntesAvisarReabastecimento,
       this.horaReabasteciemnto,
+      this.avisarReabastecimento,
       this.frequencia});
 
   Medicamento.fromMap(Map map) {
     id = map['id'];
     nome = map['nome'];
-    ativo = map['ativo'];
+
+    if (map['ativo'] == 1) {
+      ativo = true;
+    } else {
+      ativo = false;
+    }
+
     dataInicio = map['dataInicio'];
     dataFim = map['dataFim'];
     icone = map['icone'];
-    diasDasemana = map['diasDasemana'];
-    intervaloDeDias = map['intervaloDeDias'];
+    // diasDasemana = map['diasDasemana'];
+    // intervaloDeDias = map['intervaloDeDias'];
     dosagem = map['dosagem'];
+    medida = map['medida'];
     observacoes = map['observacoes'];
     estoque = map['estoque'];
-    reabastecimentoDias = map['reabastecimentoDias'];
+    quantidadeAntesAvisarReabastecimento =
+        map['quantidadeAntesAvisarReabastecimento'];
     horaReabasteciemnto = map['horaReabasteciemnto'];
+
     frequencia = map['frequencia'];
+
+    avisos = [];
+
+    if (map['avisarReabastecimento'] == 1) {
+      avisarReabastecimento = true;
+    } else {
+      avisarReabastecimento = false;
+    }
   }
 
   Map toMap() {
@@ -59,14 +80,17 @@ class Medicamento {
       'dataInicio': dataInicio,
       'dataFim': dataFim,
       'icone': icone,
-      'diasDasemana': diasDasemana,
-      'intervaloDeDias': intervaloDeDias,
+      // 'diasDasemana': diasDasemana,
+      // 'intervaloDeDias': intervaloDeDias,
       'dosagem': dosagem,
+      'medida': medida,
       'observacoes': observacoes,
       'estoque': estoque,
-      'reabastecimentoDias': reabastecimentoDias,
+      'quantidadeAntesAvisarReabastecimento':
+          quantidadeAntesAvisarReabastecimento,
       'horaReabasteciemnto': horaReabasteciemnto,
       'frequencia': frequencia,
+      'avisarReabastecimento': avisarReabastecimento
     };
     // if (id != null) {
     //   map['id'] = id;

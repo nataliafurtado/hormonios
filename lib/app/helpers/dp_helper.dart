@@ -10,26 +10,29 @@ import 'package:sqflite/sqflite.dart';
 final String medicamentos = "medicamentos";
 
 //atributos
-final String id = "id";
-final String ativo = 'ativo';
-final String nome = "nome";
-final String dataInicio = 'dataInicio';
-final String dataFim = 'dataFim';
-final String icone = 'icone';
-final String diasDasemana = 'diasDasemana';
-final String intervaloDeDias = 'intervaloDeDias';
-final String dosagem = 'dosagem';
-final String observacoes = 'observacoes';
-final String estoque = 'estoque';
-final String reabastecimentoDias = 'reabastecimentoDias';
-final String horaReabasteciemnto = 'horaReabasteciemnto';
-final String frequencia = 'frequencia';
+final String _id = "id";
+final String _ativo = 'ativo';
+final String _nome = "nome";
+final String _dataInicio = 'dataInicio';
+final String _dataFim = 'dataFim';
+final String _icone = 'icone';
+final String _diasDasemana = 'diasDasemana';
+final String _intervaloDeDias = 'intervaloDeDias';
+final String _dosagem = 'dosagem';
+final String _medida = 'medida';
+final String _observacoes = 'observacoes';
+final String _estoque = 'estoque';
+final String _quantidadeAntesAvisarReabastecimento =
+    'quantidadeAntesAvisarReabastecimento';
+final String _horaReabasteciemnto = 'horaReabasteciemnto';
+final String _frequencia = 'frequencia';
+final String _avisarReabastecimento = 'avisarReabastecimento';
 
 // classe aviso
-final String avisos = 'avisos';
-final String hora = 'hora';
-final String qtd = 'qtd';
-final String medicamentoId = 'medicamentoId';
+final String _avisos = 'avisos';
+final String _hora = 'hora';
+final String _qtd = 'qtd';
+final String _medicamentoId = 'medicamentoId';
 
 class DBHelper {
   static final DBHelper _instance = DBHelper.internal();
@@ -48,19 +51,19 @@ class DBHelper {
 
   Future<Database> initDb() async {
     final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, "listas2.db");
+    final path = join(databasesPath, "listas11.db");
     // print(path);
 
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
-      await db.execute("CREATE TABLE $medicamentos($id INTEGER PRIMARY KEY, $nome TEXT," +
-          "$ativo TEXT,$dataInicio TEXT,$dataFim TEXT,$icone TEXT,$diasDasemana TEXT," +
-          "$intervaloDeDias INT,$dosagem TEXT,$observacoes TEXT,$estoque INT," +
-          "$reabastecimentoDias INT,$horaReabasteciemnto TEXT,$frequencia TEXT)");
+      await db.execute("CREATE TABLE $medicamentos($_id INTEGER PRIMARY KEY, $_nome TEXT," +
+          "$_ativo BOOLEAN,$_dataInicio TEXT,$_dataFim TEXT,$_icone INT,$_diasDasemana TEXT," +
+          "$_intervaloDeDias INT,$_dosagem int,$_observacoes TEXT,$_estoque INT," +
+          "$_quantidadeAntesAvisarReabastecimento INT,$_horaReabasteciemnto TEXT,$_frequencia TEXT,$_medida TEXT,$_avisarReabastecimento BOOLEAN)");
 
       await db.execute(
-          "CREATE TABLE $avisos($id INTEGER PRIMARY KEY, $hora TEXT," +
-              "$qtd INT,$medicamentoId INT)");
+          "CREATE TABLE $_avisos($_id INTEGER PRIMARY KEY, $_hora TEXT," +
+              "$_qtd INT,$_medicamentoId INT)");
     });
   }
 
@@ -74,21 +77,31 @@ class DBHelper {
     Database dbTrans = await db;
     for (Aviso a in avisosList) {
       a.medicamentoId = id;
-      await dbTrans.insert(avisos, a.toMap());
+      await dbTrans.insert(_avisos, a.toMap());
     }
   }
 
-  Future<Medicamento> getMedicamento(int id) async {
+  Future<Medicamento> getMedicamento(int idpassadoinferno) async {
     Database dbTrans = await db;
-    List<Map> maps = await dbTrans.query(medicamentos,
-        //columns: [idColumn, nameColumn],
-        where: "$id = ?",
-        whereArgs: [id]);
+    List<Map> maps = await dbTrans
+        .rawQuery('Select * from $medicamentos where id=$idpassadoinferno');
+
     if (maps.length > 0) {
       return Medicamento.fromMap(maps.first);
     } else {
       return null;
     }
+  }
+
+  Future<List<Aviso>> getAvisos(int idpassadoinferno) async {
+    Database dbTrans = await db;
+    List<Map> maps = await dbTrans.rawQuery(
+        'Select * from $_avisos where medicamentoId=$idpassadoinferno');
+    List<Aviso> list = List();
+    for (Map m in maps) {
+      list.add(Aviso.fromMap(m));
+    }
+    return list;
   }
 
   // Future<Item> getItem(String caminho) async {
@@ -104,11 +117,11 @@ class DBHelper {
   //   }
   // }
 
-  // Future<int> deleteLista(int id) async {
-  //   Database dbLista = await db;
-  //   return await dbLista
-  //       .delete(listaTable, where: "$idColumn = ?", whereArgs: [id]);
-  // }
+  Future<int> deleteLista(int id) async {
+    Database dbtrans = await db;
+    return await dbtrans
+        .delete(medicamentos, where: "$id = ?", whereArgs: [id]);
+  }
 
   // Future<int> deleteItem(int id) async {
   //   Database dbLista = await db;
@@ -135,6 +148,7 @@ class DBHelper {
     for (Map m in listMap) {
       list.add(Medicamento.fromMap(m));
     }
+
     return list;
   }
 

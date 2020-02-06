@@ -135,7 +135,7 @@ class _AlertaDialogSemanaState extends State<AlertaDialogSemana>
           },
         ),
         FlatButton(
-          child: Text("Continar"),
+          child: Text("Continuar"),
           onPressed: () {
             Navigator.pop(context);
           },

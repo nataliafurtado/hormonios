@@ -1,12 +1,12 @@
-class Situacao {
+class Lembrete {
   bool confirmado;
   String remedio;
   String hora;
-  String dia;
+  DateTime dia;
   String horaReagendado;
   String motivoPulou;
 
-  Situacao({
+  Lembrete({
     this.confirmado,
     this.remedio,
     this.hora,

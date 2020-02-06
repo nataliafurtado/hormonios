@@ -65,44 +65,62 @@ abstract class _HormonioBase with Store {
   }
 
   Future<void> salvarNovoMedcicamento(
+      String nome,
       List<Aviso> avisos,
-      String dataInicio,
+      DateTime dataInicio,
       int duracao,
       String frequenciaSelecionada,
       //melhorar
       List<bool> diasDaSemana,
       int intervaloDeDias,
       IconData iconData,
+      // String dosagem,
+      // String observacoes,
       int estoque,
-      int reabastecimentoDias,
-      String horaAvisarReabastecimento) async {
+      int quantidadeAntesAvisarReabastecimento,
+      String horaAvisarReabastecimento,
+      bool avisarReabastecimento) async {
     //
     String diaDasemanaString = jsonEncode(diasDaSemana);
     //List list2 = jsonDecode(json);
+    DateTime dataFim;
+    if (duracao != 0 && duracao != null) {
+      dataFim = new DateTime(
+          dataInicio.year, dataInicio.month, dataInicio.day + duracao);
+    }
+    String obs;
+    if (observacaoSelecionada != null && observacaoEscrita != null) {
+      obs = '$observacaoSelecionada  $observacaoEscrita';
+    } else if (observacaoSelecionada != null) {
+      obs = '$observacaoSelecionada ';
+    } else if (observacaoEscrita != null) {
+      obs = '$observacaoEscrita';
+    }
 
+    print(iconData.fontFamily);
+    print(iconData.fontPackage);
+    print(iconData.fontFamily);
     Medicamento novo = Medicamento(
-      //  avisos: avisos,
-      dataInicio: dataInicio,
-      //data fim duração
-      frequencia: frequenciaSelecionada,
-      diasDasemana: diaDasemanaString,
-      intervaloDeDias: intervaloDeDias,
-      icone: iconData.toString(),
-      estoque: estoque,
-      reabastecimentoDias: reabastecimentoDias,
-    );
+        ativo: true,
+        nome: nome,
+        dataInicio: dataInicio.toIso8601String(),
+        dataFim: dataFim != null ? dataFim.toIso8601String() : null,
+        frequencia: frequenciaSelecionada,
+        // diasDasemana: diaDasemanaString,
+        // intervaloDeDias: intervaloDeDias,
+        icone: iconData.codePoint,
+        dosagem: quantidadeDsagem,
+        medida: medidaDOsagem,
+        observacoes: obs,
+        estoque: estoque,
+        horaReabasteciemnto: horaAvisarReabastecimento,
+        quantidadeAntesAvisarReabastecimento:
+            quantidadeAntesAvisarReabastecimento,
+        avisarReabastecimento: avisarReabastecimento);
 
     int id = await _db.saveMedicamento(novo);
     await _db.saveAvisos(avisos, id);
 
     print('swww');
-  }
-
-  void getMedicamento() async {
-    List<Medicamento> l = await _db.getAllMedicamentos();
-
-    for (var i = 0; i < l.length; i++) {
-      print(l[i].toString());
-    }
   }
 }

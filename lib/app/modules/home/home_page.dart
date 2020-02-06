@@ -1,27 +1,21 @@
 // import 'package:Projeto02/app/modules/hormonios/calendario_page.dart';
 // import 'package:Projeto02/app/modules/hormonios/hormonios_page.dart';
+import 'package:Projeto02/app/modules/calendario/calendario_page.dart';
 import 'package:Projeto02/app/modules/home/controller.dart';
 import 'package:Projeto02/app/modules/hormonio/hormonio_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
 //import 'package:firebase_admob/firebase_admob.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:Projeto02/app/modules/hormonios/novo_hormonio_controller.dart';
-
-import 'package:provider/provider.dart';
 
 enum OrderOptions { comofunciona, logout, comprar }
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
+//final FirebaseAuth _auth = FirebaseAuth.instance;
 final controller = Controller();
 
 class HomePage extends StatefulWidget {
-  final int aba;
-  final bool novoUsuario;
-  bool mostraPiramideAdm;
-  HomePage({this.aba, this.novoUsuario, this.mostraPiramideAdm});
+  HomePage();
   static const route = '/home-ui';
 
   @override
@@ -31,7 +25,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // final controllerNovoMedicamento = Modular.get<NovoHormonioController>();
 
-  int _index1 = 0;
+  //int _index1 = 0;
   //List<Tab> listTab = new List();
   List<Widget> listWidgets = new List();
 
@@ -108,13 +102,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(title: Text('TRANSAPP')),
       body: Observer(
         builder: (_) {
-          return HormonioPage();
-
-          // if (controllerHome.mostrarPagina == Pages.calendario) {
-          //   return CalendarioPage();
-          // } else if (controllerHome.mostrarPagina == Pages.hormonios) {
-          //   return HormoniosPage();
-          // }
+          return carreagarPAginas();
         },
       ),
       drawer: Drawer(
@@ -131,20 +119,31 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               title: Text('CALENDÁRIO'),
               onTap: () {
-                // controllerHome.mudarPaginaCalendarios();
                 Navigator.pop(context);
+                controller.mudarPaginaCalendarios();
+//Modular.to.pushNamed('/calendario');
               },
             ),
             ListTile(
               title: Text('HORMÔNIOS'),
               onTap: () {
-                //  controllerHome.mudarPaginaHormonios();
                 Navigator.pop(context);
+                controller.mudarPaginaHormonios();
+//Modular.to.pushNamed('/');
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget carreagarPAginas() {
+    if (controller.mostrarPagina == Pages.hormonios) {
+      return HormonioPage();
+    } else if (controller.mostrarPagina == Pages.calendario) {
+      return CalendarioPage();
+    }
+    return CalendarioPage();
   }
 }

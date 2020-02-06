@@ -2,6 +2,7 @@
 // import 'package:Projeto02/app/modules/hormonios/novo_hormonio_controller.dart';
 //import 'package:Projeto02/app/modules/hormonios/hormonios_page.dart';
 import 'package:Projeto02/app/modules/hormonio/hormonio_module.dart';
+import 'package:Projeto02/app/modules/hormonio/novo_hormonio_page.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter/material.dart';
 import 'package:Projeto02/app/app_widget.dart';
@@ -16,7 +17,16 @@ class AppModule extends MainModule {
 
   @override
   List<Router> get routers => [
-        Router('/', module: HomeModule()),
+        Router(
+          '/',
+          module: HomeModule(),
+        ),
+
+        //
+        Router('/novohormonio', module: HormonioModule()),
+        Router('/novohormonio', child: (_, args) => NovoHormonioPage()),
+        //   Router('/novohormonio', child: (_, args) => NovoHormonioPage()),
+        //    Router('/', module: MedicamentoModule()),
       ];
 
   @override
