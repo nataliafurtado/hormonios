@@ -106,8 +106,8 @@ abstract class _HormonioBase with Store {
         dataInicio: dataInicio.toIso8601String(),
         dataFim: dataFim != null ? dataFim.toIso8601String() : null,
         frequencia: frequenciaSelecionada,
-        // diasDasemana: diaDasemanaString,
-        // intervaloDeDias: intervaloDeDias,
+        diasDasemana: diaDasemanaString,
+        intervaloDeDias: intervaloDeDias,
         icone: iconData.codePoint,
         dosagem: quantidadeDsagem,
         medida: medidaDOsagem,
@@ -120,7 +120,5 @@ abstract class _HormonioBase with Store {
 
     int id = await _db.saveMedicamento(novo);
     await _db.saveAvisos(avisos, id);
-
-    print('swww');
   }
 }

@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:Projeto02/app/helpers/dp_helper.dart';
 import 'package:Projeto02/app/models/bundle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -36,7 +39,10 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(FontAwesomeIcons.trash),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pop();
+              controllerListaHormonios.apagarMedicamento(0);
+            },
           ),
           IconButton(
             icon: Icon(FontAwesomeIcons.cogs),

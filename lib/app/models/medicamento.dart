@@ -1,4 +1,6 @@
 import 'package:Projeto02/app/models/avisos.dart';
+import 'package:Projeto02/app/models/frequencia/dias_da_semana.dart';
+import 'package:Projeto02/app/models/frequencia/todo_dia.dart';
 
 class Medicamento {
   int id;
@@ -8,8 +10,8 @@ class Medicamento {
   String dataInicio;
   String dataFim;
   int icone;
-  // String diasDasemana;
-  //int intervaloDeDias;
+  String diasDasemana;
+  int intervaloDeDias;
   int dosagem;
   String medida;
   String observacoes;
@@ -18,6 +20,7 @@ class Medicamento {
   String horaReabasteciemnto;
   bool avisarReabastecimento;
   String frequencia;
+  FrequenciaClass freqClass;
 
   Medicamento(
       {this.id,
@@ -27,8 +30,8 @@ class Medicamento {
       this.dataInicio,
       this.dataFim,
       this.icone,
-      // this.diasDasemana,
-      // this.intervaloDeDias,
+      this.diasDasemana,
+      this.intervaloDeDias,
       this.dosagem,
       this.medida,
       this.observacoes,
@@ -36,7 +39,8 @@ class Medicamento {
       this.quantidadeAntesAvisarReabastecimento,
       this.horaReabasteciemnto,
       this.avisarReabastecimento,
-      this.frequencia});
+      this.frequencia,
+      this.freqClass});
 
   Medicamento.fromMap(Map map) {
     id = map['id'];
@@ -51,8 +55,8 @@ class Medicamento {
     dataInicio = map['dataInicio'];
     dataFim = map['dataFim'];
     icone = map['icone'];
-    // diasDasemana = map['diasDasemana'];
-    // intervaloDeDias = map['intervaloDeDias'];
+    diasDasemana = map['diasDasemana'];
+    intervaloDeDias = map['intervaloDeDias'];
     dosagem = map['dosagem'];
     medida = map['medida'];
     observacoes = map['observacoes'];
@@ -70,6 +74,12 @@ class Medicamento {
     } else {
       avisarReabastecimento = false;
     }
+
+    if (map['frequencia'] == 'TODOS OS DIAS') {
+      freqClass = TodoDia();
+    } else if (map['frequencia'] == 'DIAS ESPECÍFICOS DA SEMANA') {
+      freqClass = DiasDaSemana();
+    } else if (map['frequencia'] == 2) {}
   }
 
   Map toMap() {
@@ -80,8 +90,8 @@ class Medicamento {
       'dataInicio': dataInicio,
       'dataFim': dataFim,
       'icone': icone,
-      // 'diasDasemana': diasDasemana,
-      // 'intervaloDeDias': intervaloDeDias,
+      'diasDasemana': diasDasemana,
+      'intervaloDeDias': intervaloDeDias,
       'dosagem': dosagem,
       'medida': medida,
       'observacoes': observacoes,
@@ -116,4 +126,9 @@ class Medicamento {
   String toString() {
     return "Medicamentos(id: $id, name: $nome)   $ativo $icone $dosagem $estoque ";
   }
+}
+
+abstract class FrequenciaClass {
+  Future<Map<DateTime, List>> mapeia(DateTime segundaDessaSEmana,
+      Medicamento medicamento, Map<DateTime, List> map);
 }

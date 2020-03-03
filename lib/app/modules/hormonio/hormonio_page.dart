@@ -53,7 +53,13 @@ class _HormonioPageState extends State<HormonioPage>
               padding: const EdgeInsets.all(8.0),
               child: Observer(
                 builder: (_) {
-                  return ListView.builder(
+                  return
+                      //  controllerListaHormonios.medicamentosLista.isEmpty
+                      //     ? Center(
+                      //         child: CircularProgressIndicator(),
+                      //       )
+                      //     :
+                      ListView.builder(
                     itemCount:
                         controllerListaHormonios.medicamentosLista.length,
                     itemBuilder: (ctx, indexMedicamentos) {
@@ -138,12 +144,11 @@ class _HormonioPageState extends State<HormonioPage>
                                         Icon(Icons.calendar_today,
                                             size: 15, color: Colors.pink),
                                         Text(
-                                            ' ' +
-                                                controllerListaHormonios
-                                                    .carregaTituloDaLista(
-                                                        controllerListaHormonios
-                                                                .medicamentosLista[
-                                                            indexMedicamentos]),
+                                            controllerListaHormonios
+                                                .carregaTituloDaLista(
+                                                    controllerListaHormonios
+                                                            .medicamentosLista[
+                                                        indexMedicamentos]),
                                             style: TextStyle(
                                                 color: Colors.grey.shade600))
                                       ],

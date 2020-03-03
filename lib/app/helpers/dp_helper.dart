@@ -51,7 +51,7 @@ class DBHelper {
 
   Future<Database> initDb() async {
     final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, "listas11.db");
+    final path = join(databasesPath, "listas12.db");
     // print(path);
 
     return await openDatabase(path, version: 1,
@@ -117,7 +117,7 @@ class DBHelper {
   //   }
   // }
 
-  Future<int> deleteLista(int id) async {
+  Future<int> deleteMedicamento(int id) async {
     Database dbtrans = await db;
     return await dbtrans
         .delete(medicamentos, where: "$id = ?", whereArgs: [id]);
