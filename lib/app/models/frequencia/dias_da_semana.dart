@@ -57,12 +57,11 @@ class DiasDaSemana implements FrequenciaClass {
               avisosDesseMed[i3].qtd.toString());
         }
 
-        // if (map.containsKey(dia)) {
-        //   List l = map[dia];
-        //   l.addAll(avisosEvento);
-        //   map.update(dia, (dynamic val) => val);
-        // }
-        map.putIfAbsent(dia, () => avisosEvento);
+        if (map.containsKey(dia)) {
+          map[dia].add(avisosEvento);
+        } else {
+          map.putIfAbsent(dia, () => avisosEvento);
+        }
       }
     }
     return map;

@@ -120,22 +120,22 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
                           ),
                         ),
                       ),
-                      Visibility(
-                        visible:
-                            controllerListaHormonios.medicamentos.observacoes ==
-                                    null
-                                ? false
-                                : true,
-                        child: Container(
-                          height: 30,
-                          child: Text(
-                            'OBS:   ' +
-                                controllerListaHormonios
-                                    .medicamentos.observacoes,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
+                      // Visibility(
+                      //   visible:
+                      //       controllerListaHormonios.medicamentos.observacoes ==
+                      //               null
+                      //           ? false
+                      //           : true,
+                      //   child: Container(
+                      //     height: 30,
+                      //     child: Text(
+                      //       'OBS:   ' +
+                      //           controllerListaHormonios
+                      //               .medicamentos.observacoes,
+                      //       style: TextStyle(fontWeight: FontWeight.bold),
+                      //     ),
+                      //   ),
+                      // ),
                       Visibility(
                         visible:
                             controllerListaHormonios.medicamentos.dataInicio ==

@@ -37,7 +37,7 @@ class TodoDia implements FrequenciaClass {
     //  for dias da semana
     //
     //
-    Map<DateTime, List> map = {};
+    //Map<DateTime, List> map = {};
 
     DBHelper _db = DBHelper();
     for (var i2 = 0; i2 < 7; i2++) {
@@ -58,7 +58,11 @@ class TodoDia implements FrequenciaClass {
             ' QTD: ' +
             avisosDesseMed[i3].qtd.toString());
       }
-      map.putIfAbsent(dia, () => avisosEvento);
+      if (map.containsKey(dia)) {
+        map[dia].add(avisosEvento);
+      } else {
+        map.putIfAbsent(dia, () => avisosEvento);
+      }
     }
     // if dias especificaos da semana
     //
