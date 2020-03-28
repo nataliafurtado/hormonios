@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 //import 'package:gerenciador/models/item.dart';
 import 'package:Projeto02/app/models/avisos.dart';
@@ -33,6 +34,8 @@ final String _avisos = 'avisos';
 final String _hora = 'hora';
 final String _qtd = 'qtd';
 final String _medicamentoId = 'medicamentoId';
+// final String _dia = 'dia';
+// final String _statusAvisoEnum = 'statusAvisoEnum';
 
 class DBHelper {
   static final DBHelper _instance = DBHelper.internal();
@@ -51,7 +54,7 @@ class DBHelper {
 
   Future<Database> initDb() async {
     final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, "listas12.db");
+    final path = join(databasesPath, "listas14.db");
     // print(path);
 
     return await openDatabase(path, version: 1,
@@ -63,7 +66,7 @@ class DBHelper {
 
       await db.execute(
           "CREATE TABLE $_avisos($_id INTEGER PRIMARY KEY, $_hora TEXT," +
-              "$_qtd INT,$_medicamentoId INT)");
+              "$_qtd INT,$_medicamentoId INT )");
     });
   }
 
@@ -101,6 +104,8 @@ class DBHelper {
     for (Map m in maps) {
       list.add(Aviso.fromMap(m));
     }
+    log('avisosssss');
+    log(list.length.toString());
     return list;
   }
 

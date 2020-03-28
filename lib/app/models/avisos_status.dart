@@ -1,29 +1,24 @@
 import 'package:Projeto02/app/enums/statusAvisoEnum.dart';
 
-class Aviso {
+class AvisoStatus {
   int id;
   int medicamentoId;
   String hora;
   int qtd;
   //
-  // DateTime dia;
-  // StatusAvisoEnum statusAvisoEnum;
+  DateTime dia;
+  StatusAvisoEnum statusAvisoEnum;
 
-  Aviso({
-    this.id,
-    this.hora,
-    this.qtd,
-    // this.dia,
-  });
+  AvisoStatus({this.id, this.hora, this.qtd, this.dia, this.statusAvisoEnum});
 
-  Aviso.fromMap(Map map) {
+  AvisoStatus.fromMap(Map map) {
     id = map['id'];
     hora = map['hora'];
     qtd = map['qtd'];
     medicamentoId = map['medicamentoId'];
-    // dia = map['dia'];
-    // statusAvisoEnum =
-    //     StatusAvisoEnumConverter().enumConverter(map['statusAvisoEnum']);
+    dia = map['dia'];
+    statusAvisoEnum =
+        StatusAvisoEnumConverter().enumConverter(map['statusAvisoEnum']);
   }
 
   Map toMap() {
@@ -31,8 +26,8 @@ class Aviso {
       'hora': hora,
       'qtd': qtd,
       'medicamentoId': medicamentoId,
-      // 'dia': dia,
-      // 'statusAvisoEnum': statusAvisoEnum.toString(),
+      'dia': dia,
+      'statusAvisoEnum': statusAvisoEnum.toString(),
     };
     // if (id != null) {
     //   map['id'] = id;

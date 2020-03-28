@@ -1,4 +1,5 @@
 import 'package:Projeto02/app/models/avisos.dart';
+import 'package:Projeto02/app/models/calendario_semana.dart';
 import 'package:Projeto02/app/models/frequencia/dias_da_semana.dart';
 import 'package:Projeto02/app/models/frequencia/todo_dia.dart';
 
@@ -20,7 +21,7 @@ class Medicamento {
   String horaReabasteciemnto;
   bool avisarReabastecimento;
   String frequencia;
-  FrequenciaClass freqClass;
+  CalendarioSemanaClass calendarioSemanaClass;
 
   Medicamento(
       {this.id,
@@ -40,7 +41,7 @@ class Medicamento {
       this.horaReabasteciemnto,
       this.avisarReabastecimento,
       this.frequencia,
-      this.freqClass});
+      this.calendarioSemanaClass});
 
   Medicamento.fromMap(Map map) {
     id = map['id'];
@@ -76,9 +77,9 @@ class Medicamento {
     }
 
     if (map['frequencia'] == 'TODOS OS DIAS') {
-      freqClass = TodoDia();
+      calendarioSemanaClass = TodoDia();
     } else if (map['frequencia'] == 'DIAS ESPECÍFICOS DA SEMANA') {
-      freqClass = DiasDaSemana();
+      calendarioSemanaClass = DiasDaSemana();
     } else if (map['frequencia'] == 2) {}
   }
 
@@ -128,7 +129,10 @@ class Medicamento {
   }
 }
 
-abstract class FrequenciaClass {
-  Future<Map<DateTime, List>> mapeia(DateTime segundaDessaSEmana,
-      Medicamento medicamento, Map<DateTime, List> map);
+abstract class CalendarioSemanaClass {
+  Future<CalendarioSemana> carregaCalendarioSemana(
+    DateTime segundaDessaSEmana,
+    Medicamento medicamento,
+    CalendarioSemana calendarioSemana,
+  );
 }

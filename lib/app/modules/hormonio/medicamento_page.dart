@@ -41,7 +41,8 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
             icon: Icon(FontAwesomeIcons.trash),
             onPressed: () {
               Navigator.of(context).pop();
-              controllerListaHormonios.apagarMedicamento(0);
+              controllerListaHormonios
+                  .apagarMedicamento(controllerListaHormonios.medicamentos.id);
             },
           ),
           IconButton(

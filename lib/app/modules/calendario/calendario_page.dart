@@ -1,4 +1,10 @@
-import 'package:Projeto02/app/models/lembrete.dart';
+import 'dart:developer';
+
+import 'package:Projeto02/app/enums/statusAvisoEnum.dart';
+import 'package:Projeto02/app/helpers/notifications.dart';
+import 'package:Projeto02/app/models/avisos.dart';
+import 'package:Projeto02/app/models/avisos_status.dart';
+import 'package:Projeto02/app/models/medicamento.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -23,17 +29,23 @@ final controllerCalendario = Modular.get<CalendarioController>();
 class _CalendarioPageState extends State<CalendarioPage>
     with TickerProviderStateMixin {
   List _selectedEvents;
+  DateTime _selectDay;
+
   AnimationController _animationController;
   CalendarController _calendarController;
 
   @override
   void initState() {
     super.initState();
-
-    final _selectedDay = DateTime.now();
+    log('initiada aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    _selectedEvents = [];
+    var aux = DateTime.now();
+    final hj = new DateTime(aux.year, aux.month, aux.day);
     controllerCalendario.carregarCalendario();
+    // .then((value) {
+    //   _onDaySelected(hj, controllerCalendario.events[hj]);
+    // });
 
-    _selectedEvents = controllerCalendario.events[_selectedDay] ?? [];
     _calendarController = CalendarController();
 
     _animationController = AnimationController(
@@ -42,19 +54,27 @@ class _CalendarioPageState extends State<CalendarioPage>
     );
 
     _animationController.forward();
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+
+    // });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     _calendarController.dispose();
+    log('fechou os controler do calendario');
     super.dispose();
   }
 
   void _onDaySelected(DateTime day, List events) {
     print('CALLBACK: _onDaySelected');
+    log(events.toString());
+
     setState(() {
       _selectedEvents = events;
+      _selectDay = day;
     });
   }
 
@@ -72,21 +92,65 @@ class _CalendarioPageState extends State<CalendarioPage>
       return Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          Container(
-            height: 50,
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child:
+//           Container(
+//             height: 50,
+//             child: Padding(
+//                 padding: const EdgeInsets.all(8.0),
+//                 child:
 
-                    //Text('data'),
+//                     //Text('data'),
 
-                    RaisedButton(
-                  child: Text(controllerCalendario.rr.toString()),
-                  onPressed: () {
-                    controllerCalendario.incremet();
-                  },
-                )),
-          ),
+//                     RaisedButton(
+//                   child: Text('1111'),
+//                   onPressed: () {
+// //controllerCalendario.calendarioSemana.
+//                     //  Notifications.pending();
+//                     // var aux = DateTime.now();
+//                     // final hj = new DateTime(aux.year, aux.month, aux.day);
+//                     // // _onDaySelected(
+//                     // //     DateTime.now(), controllerCalendario.events[hj]);
+//                   },
+//                 )),
+//           ),
+
+          // Container(
+          //   height: 50,
+          //   child: Padding(
+          //       padding: const EdgeInsets.all(8.0),
+          //       child:
+
+          //           //Text('data'),
+
+          //           RaisedButton(
+          //         child: Text('p s PER'),
+          //         onPressed: () {
+          //           Notifications.notificaPorPushSP();
+          //         },
+          //       )),
+          // ),
+
+          // Container(
+          //   height: 50,
+          //   child: Padding(
+          //       padding: const EdgeInsets.all(8.0),
+          //       child:
+
+          //           //Text('data'),
+
+          //           RaisedButton(
+          //         child: Text('sssssss'),
+          //         onPressed: () {
+          //           Notifications.notificaPorPushS();
+          //         },
+          //       )),
+          // ),
+
+          //
+
+          //
+          //
+          // começa aqui
+          //
           _buildTableCalendarWithBuilders(),
           const SizedBox(height: 8.0),
           //   _buildButtons(),
@@ -98,13 +162,13 @@ class _CalendarioPageState extends State<CalendarioPage>
   }
 
   // Simple TableCalendar configuration (using Styles)
-
+  // Map<DateTime, List> ddd = {};
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
     return TableCalendar(
       locale: 'pt_BR',
       calendarController: _calendarController,
-      events: controllerCalendario.events,
+      events: controllerCalendario.calendarioSemana.diaIdMap,
       holidays: _holidays,
       initialCalendarFormat: CalendarFormat.week,
       formatAnimation: FormatAnimation.slide,
@@ -172,7 +236,7 @@ class _CalendarioPageState extends State<CalendarioPage>
             );
           }
 
-          if (date.day == 9) {
+          if (date.day == 25) {
             children.add(
               Positioned(
                 right: -2,
@@ -270,22 +334,185 @@ class _CalendarioPageState extends State<CalendarioPage>
   // }
 
   Widget _buildEventList() {
-    return ListView(
-      children: _selectedEvents
-          .map((event) => Container(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 0.8),
-                  borderRadius: BorderRadius.circular(6.0),
-                ),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                child: ListTile(
-                  title: Text(event.toString()),
-                  onTap: () => print('$event tapped! bb'),
-                ),
-              ))
-          .toList(),
-    );
+    return ListView.builder(
+        itemCount: _selectedEvents.length,
+        itemBuilder: (ctx, index) {
+          Medicamento _medSelected = controllerCalendario.medicamentosLista
+              .firstWhere((med) => med.id == _selectedEvents[index]);
+
+          var _avisosSelect = controllerCalendario
+              .calendarioSemana.medAvisoMap[_medSelected]
+              .where((ee) => ee.dia.day == _selectDay.day);
+
+          ///AGRUPAR POR HORA
+
+          return Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.blue.shade400,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        )),
+                    height: 45,
+                    width: double.infinity,
+                    child: Stack(
+                      children: <Widget>[
+                        Center(
+                          child: Text(
+                            _medSelected.nome,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                            right: 10,
+                            child: IconButton(
+                                icon: Icon(
+                                  Icons.more_horiz,
+                                  color: Colors.white,
+                                ),
+                                onPressed: null))
+                      ],
+                    ),
+                  ),
+                  ListTile(
+                    title: Container(
+                      // color: Colors.amber,
+
+                      height: (_avisosSelect.length * 25).toDouble() + 30,
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            height: 30,
+                            width: double.infinity,
+                            //  color: Colors.grey.shade200,
+                            child:
+                                //Align(
+                                // alignment: Alignment(-0.8, 0),
+                                // child:
+                                Text(' Dose(s) - ' +
+                                    _avisosSelect.elementAt(0).qtd.toString() +
+                                    ' ' +
+                                    (_medSelected.medida == null
+                                        ? 'ml'
+                                        : _medSelected.medida)),
+                            // ),
+                          ),
+                          Container(
+                            height: (_avisosSelect.length * 25).toDouble(),
+                            child: ListView.builder(
+                                itemCount: _avisosSelect.length,
+                                itemBuilder: (ctx, indexAviso) {
+                                  AvisoStatus avisoSel =
+                                      _avisosSelect.elementAt(indexAviso);
+
+                                  if (avisoSel.statusAvisoEnum ==
+                                      StatusAvisoEnum.antesDeAvisar) {
+                                    return Container(
+                                      margin: EdgeInsets.only(bottom: 5),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text('Ingerir às'),
+                                          Text(avisoSel.hora)
+                                        ],
+                                      ),
+                                    );
+                                  } else if (avisoSel.statusAvisoEnum ==
+                                      StatusAvisoEnum.atrasado) {
+                                    return Container(
+                                      margin: EdgeInsets.only(bottom: 5),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            'Deveria ter ingerido ás',
+                                            style: TextStyle(
+                                                color: Colors.red.shade400),
+                                          ),
+                                          Text(avisoSel.hora)
+                                        ],
+                                      ),
+                                    );
+                                  } else if (avisoSel.statusAvisoEnum ==
+                                      StatusAvisoEnum.ingerido) {
+                                    return Container(
+                                      margin: EdgeInsets.only(bottom: 5),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            'Ingerido às ',
+                                            style: TextStyle(
+                                                color: Colors.green.shade400),
+                                          ),
+                                          Text(avisoSel.hora)
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  return null;
+                                }),
+                          )
+                        ],
+                      ),
+                    ),
+                    leading: Container(
+                      margin: EdgeInsets.only(
+                          top: (_avisosSelect.length * 4).toDouble()),
+                      child: Icon(IconData(_medSelected.icone,
+                          fontPackage: 'font_awesome_flutter',
+                          fontFamily: 'FontAwesomeSolid')),
+                    ),
+                    onTap: () => print(' tapped! bb'),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+
+    // ListView(
+    //   children: _selectedEvents
+    //       .map((event) =>
+    // Container(
+    //             decoration: BoxDecoration(
+    //               border: Border.all(width: 2, color: Colors.blue),
+    //               // color: Colors.blue,
+    //               borderRadius: BorderRadius.circular(6.0),
+    //             ),
+    //             margin:
+    //                 const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+    //             child: ListTile(
+    //               title: Text(event.toString()),
+    //               //  Text(
+    //               // controllerCalendario.calendarioSemana.medAvisoMap[1][0]),
+    //               leading: Icon(IconData(
+    //                   controllerCalendario.medicamentosLista[0].icone,
+    //                   fontPackage: 'font_awesome_flutter',
+    //                   fontFamily: 'FontAwesomeSolid')),
+    //               onTap: () => print('$event tapped! bb'),
+    //             ),
+    //           ))
+    //       .toList(),
+    // );
   }
 
   Widget _buildHolidaysMarker() {
