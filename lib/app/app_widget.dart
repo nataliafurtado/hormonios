@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:Projeto02/app/helpers/gerar_notificacoes.dart';
 import 'package:Projeto02/app/helpers/notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -5,7 +8,9 @@ import 'package:flutter_modular/flutter_modular.dart';
 class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // INICIAR NOTIFICACOES
     Notifications();
+    // GerarNotificacoes();
     return
 
         // MultiProvider(

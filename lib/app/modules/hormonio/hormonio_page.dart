@@ -64,6 +64,9 @@ class _HormonioPageState extends State<HormonioPage>
                         controllerListaHormonios.medicamentosLista.length,
                     itemBuilder: (ctx, indexMedicamentos) {
                       return Card(
+                        // shape: RoundedRectangleBorder(
+                        //   borderRadius: BorderRadius.circular(10.0),
+                        // ),
                         child: InkWell(
                           // splashColor: Colors.orange,
                           onTap: () {
@@ -77,7 +80,9 @@ class _HormonioPageState extends State<HormonioPage>
                             //     '/medicamento/${controllerListaHormonios.medicamentosLista[indexMedicamentos].id}');
                           },
                           child: Container(
-                            decoration: BoxDecoration(color: Colors.white),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15)),
                             child: ListTile(
                                 // contentPadding: EdgeInsets.symmetric(
                                 //     horizontal: 10.0, vertical: 10.0),

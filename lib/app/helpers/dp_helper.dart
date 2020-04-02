@@ -3,6 +3,7 @@ import 'dart:developer';
 
 //import 'package:gerenciador/models/item.dart';
 import 'package:Projeto02/app/models/avisos.dart';
+import 'package:Projeto02/app/models/avisos_status.dart';
 import 'package:Projeto02/app/models/medicamento.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -34,8 +35,11 @@ final String _avisos = 'avisos';
 final String _hora = 'hora';
 final String _qtd = 'qtd';
 final String _medicamentoId = 'medicamentoId';
-// final String _dia = 'dia';
-// final String _statusAvisoEnum = 'statusAvisoEnum';
+
+final String _avisosStatus = 'avisosStatus';
+final String _avisoId = 'avisoId';
+final String _dia = 'dia';
+final String _statusAvisoEnum = 'statusAvisoEnum';
 
 class DBHelper {
   static final DBHelper _instance = DBHelper.internal();
@@ -67,6 +71,9 @@ class DBHelper {
       await db.execute(
           "CREATE TABLE $_avisos($_id INTEGER PRIMARY KEY, $_hora TEXT," +
               "$_qtd INT,$_medicamentoId INT )");
+      await db.execute(
+          "CREATE TABLE $_avisosStatus($_id INTEGER PRIMARY KEY, $_avisoId INT," +
+              "$_dia TEXT,$_statusAvisoEnum TEXT)");
     });
   }
 
@@ -80,6 +87,13 @@ class DBHelper {
     Database dbTrans = await db;
     for (Aviso a in avisosList) {
       a.medicamentoId = id;
+      await dbTrans.insert(_avisos, a.toMap());
+    }
+  }
+
+  Future<void> saveAvisosStatus(List avisosList) async {
+    Database dbTrans = await db;
+    for (AvisoStatus a in avisosList) {
       await dbTrans.insert(_avisos, a.toMap());
     }
   }
@@ -104,8 +118,53 @@ class DBHelper {
     for (Map m in maps) {
       list.add(Aviso.fromMap(m));
     }
-    log('avisosssss');
-    log(list.length.toString());
+    // log('avisosssss');
+    // log(list.length.toString());
+    return list;
+  }
+
+  Future<List<AvisoStatus>> getAvisosStatus(
+      int idpassadoinferno, String diaPassado) async {
+    Database dbTrans = await db;
+    List<Map> maps = await dbTrans.rawQuery(
+        'Select * from $_avisosStatus a where a.$_avisoId=$idpassadoinferno and a.$_dia=$diaPassado');
+    List<AvisoStatus> list = List();
+    for (Map m in maps) {
+      list.add(AvisoStatus.fromMap(m));
+    }
+    // log('avisosssss');
+    // log(list.length.toString());
+    return list;
+  }
+
+  Future<int> deleteMedicamento(int id) async {
+    Database dbtrans = await db;
+    return await dbtrans
+        .delete(medicamentos, where: "$id = ?", whereArgs: [id]);
+  }
+
+  Future<List> getAllMedicamentos() async {
+    Database dbTrasn = await db;
+    List listMap = await dbTrasn.rawQuery("SELECT * FROM $medicamentos");
+    List<Medicamento> list = List();
+    for (Map m in listMap) {
+      list.add(Medicamento.fromMap(m));
+    }
+
+    return list;
+  }
+
+  Future<List> getAllMedicamentosDentroDasDatas() async {
+    Database dbTrasn = await db;
+
+    final now = DateTime.now().toIso8601String();
+    List listMap = await dbTrasn.rawQuery(
+        "SELECT * FROM $medicamentos m where m.$_dataInicio < '$now' and (m.$_dataFim is null or m.$_dataFim > '$now') ");
+    List<Medicamento> list = List();
+    for (Map m in listMap) {
+      list.add(Medicamento.fromMap(m));
+    }
+
     return list;
   }
 
@@ -121,12 +180,6 @@ class DBHelper {
   //     return null;
   //   }
   // }
-
-  Future<int> deleteMedicamento(int id) async {
-    Database dbtrans = await db;
-    return await dbtrans
-        .delete(medicamentos, where: "$id = ?", whereArgs: [id]);
-  }
 
   // Future<int> deleteItem(int id) async {
   //   Database dbLista = await db;
@@ -145,17 +198,6 @@ class DBHelper {
   //   return await dbLista.update(itemsTable, item.toMap(),
   //       where: "$idColumn = ?", whereArgs: [item.id]);
   // }
-
-  Future<List> getAllMedicamentos() async {
-    Database dbTrasn = await db;
-    List listMap = await dbTrasn.rawQuery("SELECT * FROM $medicamentos");
-    List<Medicamento> list = List();
-    for (Map m in listMap) {
-      list.add(Medicamento.fromMap(m));
-    }
-
-    return list;
-  }
 
   // Future<int> getCountItemsDeLista(Lista lista) async {
   //   Database dbLista = await db;

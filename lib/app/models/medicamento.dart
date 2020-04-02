@@ -8,8 +8,8 @@ class Medicamento {
   bool ativo;
   String nome;
   List<Aviso> avisos;
-  String dataInicio;
-  String dataFim;
+  DateTime dataInicio;
+  DateTime dataFim;
   int icone;
   String diasDasemana;
   int intervaloDeDias;
@@ -53,8 +53,8 @@ class Medicamento {
       ativo = false;
     }
 
-    dataInicio = map['dataInicio'];
-    dataFim = map['dataFim'];
+    dataInicio = DateTime.parse(map['dataInicio']);
+    dataFim = map['dataFim'] == null ? null : DateTime.parse(map['dataFim']);
     icone = map['icone'];
     diasDasemana = map['diasDasemana'];
     intervaloDeDias = map['intervaloDeDias'];
@@ -88,8 +88,8 @@ class Medicamento {
       'ativo': ativo,
       'nome': nome,
       //  avisos: avisos,
-      'dataInicio': dataInicio,
-      'dataFim': dataFim,
+      'dataInicio': dataInicio.toIso8601String(),
+      'dataFim': dataFim.toIso8601String(),
       'icone': icone,
       'diasDasemana': diasDasemana,
       'intervaloDeDias': intervaloDeDias,

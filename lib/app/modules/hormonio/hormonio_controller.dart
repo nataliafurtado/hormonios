@@ -103,8 +103,8 @@ abstract class _HormonioBase with Store {
     Medicamento novo = Medicamento(
         ativo: true,
         nome: nome,
-        dataInicio: dataInicio.toIso8601String(),
-        dataFim: dataFim != null ? dataFim.toIso8601String() : null,
+        dataInicio: dataInicio,
+        dataFim: dataFim != null ? dataFim : null,
         frequencia: frequenciaSelecionada,
         diasDasemana: diaDasemanaString,
         intervaloDeDias: intervaloDeDias,

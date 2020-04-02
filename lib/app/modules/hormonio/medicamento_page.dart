@@ -147,8 +147,8 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
                           height: 30,
                           child: Text(
                             'INÍCIO:  ' +
-                                _formataData(controllerListaHormonios
-                                    .medicamentos.dataInicio),
+                                _formataData(
+                                    'controllerListaHormonios.medicamentos.dataInicio'),
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -163,8 +163,8 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
                           height: 30,
                           child: Text(
                             'FIM:  ' +
-                                _formataData(controllerListaHormonios
-                                    .medicamentos.dataFim),
+                                _formataData(
+                                    'controllerListaHormonios.medicamentos.dataInicio'),
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),

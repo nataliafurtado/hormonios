@@ -54,31 +54,32 @@ class TodoDia implements CalendarioSemanaClass {
 
       for (var i3 = 0; i3 < avisosDesseMed.length; i3++) {
         AvisoStatus avi;
-        if (i3 == 1) {
-          avi = AvisoStatus(
-            id: avisosDesseMed[i3].id,
-            hora: avisosDesseMed[i3].hora,
-            qtd: avisosDesseMed[i3].qtd,
-            dia: dia,
-            statusAvisoEnum: StatusAvisoEnum.atrasado,
-          );
-        } else if (i3 == 2) {
-          avi = AvisoStatus(
-            id: avisosDesseMed[i3].id,
-            hora: avisosDesseMed[i3].hora,
-            qtd: avisosDesseMed[i3].qtd,
-            dia: dia,
-            statusAvisoEnum: StatusAvisoEnum.ingerido,
-          );
-        } else {
-          avi = AvisoStatus(
-            id: avisosDesseMed[i3].id,
-            hora: avisosDesseMed[i3].hora,
-            qtd: avisosDesseMed[i3].qtd,
-            dia: dia,
-            statusAvisoEnum: StatusAvisoEnum.antesDeAvisar,
-          );
-        }
+
+        avi = AvisoStatus(
+          aviso: avisosDesseMed[i3],
+          dia: dia,
+          statusAvisoEnum: StatusAvisoEnum.antesDeAvisar,
+        );
+
+        // if (i3 == 1) {
+        //   avi = AvisoStatus(
+        //     aviso: avisosDesseMed[i3],
+        //     dia: dia,
+        //     statusAvisoEnum: StatusAvisoEnum.atrasado,
+        //   );
+        // } else if (i3 == 2) {
+        //   avi = AvisoStatus(
+        //     aviso: avisosDesseMed[i3],
+        //     dia: dia,
+        //     statusAvisoEnum: StatusAvisoEnum.ingerido,
+        //   );
+        // } else {
+        //   avi = AvisoStatus(
+        //     aviso: avisosDesseMed[i3],
+        //     dia: dia,
+        //     statusAvisoEnum: StatusAvisoEnum.antesDeAvisar,
+        //   );
+        // }
 
         // fazer for checar se tem esse dia e subtituis se necessári
 

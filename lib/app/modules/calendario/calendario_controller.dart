@@ -10,7 +10,7 @@ part 'calendario_controller.g.dart';
 
 class CalendarioController = _CalendarioBase with _$CalendarioController;
 DBHelper _db = DBHelper();
-SingletonBundle bundle = SingletonBundle();
+//SingletonBundle bundle = SingletonBundle();
 
 abstract class _CalendarioBase with Store {
   @observable
@@ -32,16 +32,16 @@ abstract class _CalendarioBase with Store {
     // FOR LISTA DE MEDICAMENTOS
     for (var i1 = 0; i1 < medicamentosLista.length; i1++) {
       // PEGA DATAS INICIO O FIM DA MEDICAÇÃO
-      DateTime dataInicio = DateTime.parse(medicamentosLista[i1].dataInicio);
+      DateTime dataInicio = medicamentosLista[i1].dataInicio;
       dataInicio =
           new DateTime(dataInicio.year, dataInicio.month, dataInicio.day);
       DateTime dataFim;
       if (medicamentosLista[i1].dataFim != null) {
-        dataFim = DateTime.parse(medicamentosLista[i1].dataFim);
+        dataFim = medicamentosLista[i1].dataFim;
       }
       if ((hoje.isAfter(dataInicio) || hoje.isAtSameMomentAs(dataInicio)) &&
           (dataFim == null || hoje.isBefore(dataFim))) {
-// INICIAR MAPS
+        // INICIAR MAPS
         if (calendarioSemana.medAvisoMap[medicamentosLista[i1]] == null) {
           calendarioSemana.medAvisoMap[medicamentosLista[i1]] = [];
         }
@@ -54,7 +54,6 @@ abstract class _CalendarioBase with Store {
       //     }
       //   }
       // }
-      log('fim');
     }
   }
 

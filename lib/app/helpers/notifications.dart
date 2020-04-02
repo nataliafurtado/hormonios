@@ -1,9 +1,11 @@
 import 'dart:developer';
 
+import 'package:Projeto02/app/modules/home/controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class Notifications {
   Notifications() {
@@ -26,8 +28,12 @@ class Notifications {
 
   static Future onSelectNotification(String payload) async {
     if (payload != null) {
-      debugPrint('notification payload: ' + payload);
+      debugPrint('notification payload gggg: ' + payload);
     }
+    Modular.to.pushNamed('/novohormonio');
+    // final controller = Controller();
+    // Navigator.pop(context);gg
+    // controller.mudarPaginaHormonios();
     // await Navigator.push(
     //   context,
     //   MaterialPageRoute(builder: (context) => SecondScreen(payload)),
@@ -37,35 +43,36 @@ class Notifications {
   static Future onDidReceiveLocalNotification(
       int id, String title, String body, String payload) async {
     // display a dialog with the notification details, tap ok to go to another page
-    showDialog(
-      // context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text('Ok'),
-            onPressed: () async {
-              Navigator.of(context, rootNavigator: true).pop();
-              // await Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => SecondScreen(payload),
-              //   ),
-              // );
-            },
-          )
-        ],
-      ),
-    );
+
+    log('entrou did receibe edef e');
+
+//     showDialog(
+// //context: context,
+//       builder: (BuildContext context) => CupertinoAlertDialog(
+//         title: Text(title),
+//         content: Text(body),
+//         actions: [
+//           CupertinoDialogAction(
+//             isDefaultAction: true,
+//             child: Text('Ok'),
+//             onPressed: () async {
+//               Navigator.of(context, rootNavigator: true).pop();
+//               // await Navigator.push(
+//               //   context,
+//               //   MaterialPageRoute(
+//               //     builder: (context) => SecondScreen(payload),
+//               //   ),
+//               // );
+//             },
+//           )
+//         ],
+//       ),
+//     );
   }
 
-  static void notificaPorPushS() async {
-    log('33333');
-
+  static void notificaPorPushSchedule() async {
     var scheduledNotificationDateTime =
-        DateTime.now().add(Duration(seconds: 20));
+        DateTime.now().add(Duration(seconds: 5));
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'hormonios1',
@@ -78,9 +85,8 @@ class Notifications {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
       1,
-      'plain ssss',
-      'plain ssssssss',
-      // RepeatInterval.EveryMinute,
+      'AVISO TOMAR HORMONIO',
+      'NÃO ESQUEÇA',
       scheduledNotificationDateTime,
       platformChannelSpecifics,
       payload: 'item x',
@@ -137,7 +143,7 @@ class Notifications {
     );
   }
 
-  static void pending() async {
+  static Future<List<PendingNotificationRequest>> pending() async {
     List<PendingNotificationRequest> pendingNotificationRequests =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
 
@@ -145,5 +151,6 @@ class Notifications {
       log(item.title);
       log(item.id.toString());
     }
+    return pendingNotificationRequests;
   }
 }

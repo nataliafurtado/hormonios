@@ -1,4 +1,5 @@
 import 'package:Projeto02/app/modules/calendario/calendario_controller.dart';
+import 'package:Projeto02/app/modules/cheganotificacao/cheganotificacao_controller.dart';
 import 'package:Projeto02/app/modules/hormonio/lista_homonios_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:Projeto02/app/modules/home/home_page.dart';
@@ -12,6 +13,7 @@ class HomeModule extends ChildModule {
         // Bind((i) => MedicamentoController()),
         Bind((i) => ListaHomoniosController()),
         Bind((i) => CalendarioController()),
+        Bind((i) => CheganotificacaoController()),
       ];
 
   @override

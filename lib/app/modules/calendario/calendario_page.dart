@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:Projeto02/app/enums/statusAvisoEnum.dart';
+import 'package:Projeto02/app/helpers/dp_helper.dart';
+import 'package:Projeto02/app/helpers/gerar_notificacoes.dart';
 import 'package:Projeto02/app/helpers/notifications.dart';
 import 'package:Projeto02/app/models/avisos.dart';
 import 'package:Projeto02/app/models/avisos_status.dart';
@@ -100,18 +102,23 @@ class _CalendarioPageState extends State<CalendarioPage>
 
 //                     //Text('data'),
 
-//                     RaisedButton(
-//                   child: Text('1111'),
-//                   onPressed: () {
-// //controllerCalendario.calendarioSemana.
-//                     //  Notifications.pending();
-//                     // var aux = DateTime.now();
-//                     // final hj = new DateTime(aux.year, aux.month, aux.day);
-//                     // // _onDaySelected(
-//                     // //     DateTime.now(), controllerCalendario.events[hj]);
-//                   },
-//                 )),
-//           ),
+          RaisedButton(
+            child: Text('1111'),
+            onPressed: () async {
+              Modular.to.pushNamed('/cheganotificacao');
+//               DBHelper _db = DBHelper();
+// //controllerCalendario.
+//               List<Aviso> avi = await  _db.getAvisos(1);
+//               AvisoStatus();
+
+              // slidy g c  modules/hormonio/lista_homonios
+              //  Notifications.notificaPorPushSchedule();
+              // GerarNotificacoes();
+            },
+          ),
+
+          //       ),
+          // ),
 
           // Container(
           //   height: 50,
@@ -404,12 +411,19 @@ class _CalendarioPageState extends State<CalendarioPage>
                                 //Align(
                                 // alignment: Alignment(-0.8, 0),
                                 // child:
-                                Text(' Dose(s) - ' +
-                                    _avisosSelect.elementAt(0).qtd.toString() +
-                                    ' ' +
-                                    (_medSelected.medida == null
-                                        ? 'ml'
-                                        : _medSelected.medida)),
+                                Text(
+                              ' Dose(s) - ' +
+                                  _avisosSelect
+                                      .elementAt(0)
+                                      .aviso
+                                      .qtd
+                                      .toString() +
+                                  ' ' +
+                                  (_medSelected.medida == null
+                                      ? 'ml'
+                                      : _medSelected.medida),
+                              style: TextStyle(color: Colors.grey),
+                            ),
                             // ),
                           ),
                           Container(
@@ -429,7 +443,7 @@ class _CalendarioPageState extends State<CalendarioPage>
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Text('Ingerir às'),
-                                          Text(avisoSel.hora)
+                                          Text(avisoSel.aviso.hora)
                                         ],
                                       ),
                                     );
@@ -446,7 +460,11 @@ class _CalendarioPageState extends State<CalendarioPage>
                                             style: TextStyle(
                                                 color: Colors.red.shade400),
                                           ),
-                                          Text(avisoSel.hora)
+                                          Text(
+                                            avisoSel.aviso.hora,
+                                            style: TextStyle(
+                                                color: Colors.red.shade400),
+                                          )
                                         ],
                                       ),
                                     );
@@ -463,7 +481,11 @@ class _CalendarioPageState extends State<CalendarioPage>
                                             style: TextStyle(
                                                 color: Colors.green.shade400),
                                           ),
-                                          Text(avisoSel.hora)
+                                          Text(
+                                            avisoSel.aviso.hora,
+                                            style: TextStyle(
+                                                color: Colors.green.shade400),
+                                          )
                                         ],
                                       ),
                                     );
