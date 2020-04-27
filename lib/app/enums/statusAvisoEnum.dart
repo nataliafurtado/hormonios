@@ -1,4 +1,4 @@
-enum StatusAvisoEnum { antesDeAvisar, cancelado, ingerido, atrasado }
+enum StatusAvisoEnum { antesDeAvisar, pulado, ingerido, atrasado }
 
 class StatusAvisoEnumConverter {
   String converter(StatusAvisoEnum hh) {
@@ -6,8 +6,8 @@ class StatusAvisoEnumConverter {
     // print('hh');
     if (hh == StatusAvisoEnum.antesDeAvisar) {
       return "ANTES DE AVISAR";
-    } else if (hh == StatusAvisoEnum.cancelado) {
-      return "CANCELADO";
+    } else if (hh == StatusAvisoEnum.pulado) {
+      return "PULADO";
     } else if (hh == StatusAvisoEnum.ingerido) {
       return "INGERIDO";
     } else if (hh == StatusAvisoEnum.atrasado) {
@@ -20,8 +20,8 @@ class StatusAvisoEnumConverter {
   StatusAvisoEnum enumConverter(String enumString) {
     if (enumString == 'statusAvisoEnum.antesDeAvisar') {
       return StatusAvisoEnum.antesDeAvisar;
-    } else if (enumString == 'statusAvisoEnum.cancelado') {
-      return StatusAvisoEnum.cancelado;
+    } else if (enumString == 'statusAvisoEnum.pulado') {
+      return StatusAvisoEnum.pulado;
     } else if (enumString == 'statusAvisoEnum.ingerido') {
       return StatusAvisoEnum.ingerido;
     } else if (enumString == 'statusAvisoEnum.atrasado') {

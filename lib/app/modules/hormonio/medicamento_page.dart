@@ -1,10 +1,13 @@
 import 'dart:developer';
 
 import 'package:Projeto02/app/helpers/dp_helper.dart';
+import 'package:Projeto02/app/helpers/styles.dart';
 import 'package:Projeto02/app/models/bundle.dart';
+import 'package:Projeto02/app/modules/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:Projeto02/app/modules/hormonio/lista_homonios_controller.dart';
 import 'package:intl/intl.dart';
@@ -81,7 +84,7 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
                             controllerListaHormonios.medicamentos.frequencia,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue)),
+                                color: blueTrans.shade900)),
                       ),
                       Visibility(
                         visible:
@@ -146,9 +149,9 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
                         child: Container(
                           height: 30,
                           child: Text(
-                            'INÍCIO:  ' +
-                                _formataData(
-                                    'controllerListaHormonios.medicamentos.dataInicio'),
+                            'INÍCIO:  ',
+                            // _formataData(
+                            //     'controllerListaHormonios.medicamentos.dataInicio'),
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -162,29 +165,40 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
                         child: Container(
                           height: 30,
                           child: Text(
-                            'FIM:  ' +
-                                _formataData(
-                                    'controllerListaHormonios.medicamentos.dataInicio'),
+                            'FIM:  ',
+                            // _formataData(
+                            //     'controllerListaHormonios.medicamentos.dataInicio'),
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
                       Container(
-                        color: Colors.blue.shade200,
+                        color: Styles.rosaTrans,
                         height: controllerListaHormonios
                                 .medicamentos.avisos.length *
                             50.toDouble(),
                         child: ListView.builder(
+                          padding: EdgeInsets.only(top: 10),
                           itemCount: controllerListaHormonios
                               .medicamentos.avisos.length,
                           itemBuilder: (ctx, indexAvisos) {
                             return ListTile(
                               title: InkWell(
+                                  onTap: () {
+                                    _selectTime(indexAvisos);
+                                  },
                                   child: Container(
                                       height: 40,
                                       child: Text(
                                         controllerListaHormonios.medicamentos
-                                            .avisos[indexAvisos].hora,
+                                                .avisos[indexAvisos].hora
+                                                .toString() +
+                                            ':' +
+                                            controllerListaHormonios
+                                                .medicamentos
+                                                .avisos[indexAvisos]
+                                                .minuto
+                                                .toString(),
                                         style: TextStyle(
                                             color: Colors.blue,
                                             fontWeight: FontWeight.bold),
@@ -206,8 +220,8 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
                                         controllerListaHormonios.medicamentos
                                                 .avisos[indexAvisos].qtd
                                                 .toString() +
-                                            '  DOSES(S',
-                                        style: TextStyle(color: Colors.blue),
+                                            '  DOSES(S) ',
+                                        style: TextStyle(color: Colors.white),
                                       ))),
                             );
                           },
@@ -257,6 +271,43 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
         ),
       ),
     );
+  }
+
+  Future _selectTime(int i) async {
+    TimeOfDay picked = await showTimePicker(
+      builder: (ctx, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child,
+        );
+      },
+      context: context,
+      initialTime: TimeOfDay.now()
+      // : TimeOfDay(
+      //     hour: int.parse(tempo[1].trim()),
+      //     minute: int.parse(tempo[2].trim())
+      //     )
+      ,
+    );
+    if (picked != null) {
+      setState(() {
+        controllerListaHormonios.medicamentos.avisos[i].hora = picked.hour;
+        controllerListaHormonios.medicamentos.avisos[i].minuto = picked.minute;
+      });
+    }
+    controllerListaHormonios.updateMedicamento();
+    mostaAvisoDeSalvo();
+  }
+
+  void mostaAvisoDeSalvo() {
+    Fluttertoast.showToast(
+        msg: "MEDICAMENTO SALVO",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Styles.rosaTrans,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 
   String _formataData(String data) {

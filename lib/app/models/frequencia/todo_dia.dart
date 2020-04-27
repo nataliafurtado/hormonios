@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:Projeto02/app/enums/statusAvisoEnum.dart';
 import 'package:Projeto02/app/helpers/dp_helper.dart';
 import 'package:Projeto02/app/models/avisos.dart';
@@ -6,7 +8,7 @@ import 'package:Projeto02/app/models/calendario_semana.dart';
 
 import 'package:Projeto02/app/models/medicamento.dart';
 
-class TodoDia implements CalendarioSemanaClass {
+class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
   int id;
   // int tempoToma;
 
@@ -14,25 +16,56 @@ class TodoDia implements CalendarioSemanaClass {
 
   TodoDia({
     this.id,
-    // this.tempoToma,
-    // this.intevalo,
   });
 
   TodoDia.fromMap(Map map) {
     id = map['id'];
-    // tempoToma = map['tempoToma'];
-    // intevalo = map['intevalo'];
   }
 
   Map toMap() {
-    Map<String, dynamic> map = {
-      // 'intevalo': intevalo,
-      // 'tempoToma': tempoToma,
-    };
+    Map<String, dynamic> map = {};
     // if (id != null) {
     //   map['id'] = id;
     // }
     return map;
+  }
+
+  DBHelper _db = DBHelper();
+
+  @override
+  Future<List<AvisoStatus>> carrega30diasNotificacao(
+    Aviso aviso,
+    DateTime lastMidnight,
+    Medicamento med,
+  ) async {
+    List<AvisoStatus> listAvisoStatus = [];
+
+    for (var i2 = 0; i2 < 30; i2++) {
+      DateTime diaEhora = new DateTime(
+        lastMidnight.year,
+        lastMidnight.month,
+        lastMidnight.day,
+        aviso.hora,
+        aviso.minuto,
+      ).add(Duration(days: i2));
+
+      // await _db.deleteAvisosStatus(aviso.id, diaEhora);
+
+      AvisoStatus avisoStatus = await _db.getAvisosStatus(aviso.id, diaEhora);
+      if (avisoStatus == null) {
+        log('cria nova aviso status ');
+        avisoStatus = AvisoStatus(
+            aviso: aviso,
+            dia: diaEhora,
+            medicamento: med,
+            statusAvisoEnum: StatusAvisoEnum.antesDeAvisar);
+        avisoStatus.id = await _db.saveAvisoStatus(avisoStatus);
+      }
+      // log('add avis status ja exixtente ');
+      listAvisoStatus.add(avisoStatus);
+    }
+
+    return listAvisoStatus;
   }
 
   @override
@@ -41,7 +74,6 @@ class TodoDia implements CalendarioSemanaClass {
     Medicamento medicamento,
     CalendarioSemana calendarioSemana,
   ) async {
-    DBHelper _db = DBHelper();
     // SEMANA COMEÇANDO NA SEGUNDA
     for (var i2 = 0; i2 < 7; i2++) {
       DateTime dia = segundaDessaSEmana.add(Duration(days: i2));
@@ -53,35 +85,11 @@ class TodoDia implements CalendarioSemanaClass {
       //ARRUMAR NO FOR ABAIXO
 
       for (var i3 = 0; i3 < avisosDesseMed.length; i3++) {
-        AvisoStatus avi;
-
-        avi = AvisoStatus(
+        AvisoStatus avi = AvisoStatus(
           aviso: avisosDesseMed[i3],
           dia: dia,
           statusAvisoEnum: StatusAvisoEnum.antesDeAvisar,
         );
-
-        // if (i3 == 1) {
-        //   avi = AvisoStatus(
-        //     aviso: avisosDesseMed[i3],
-        //     dia: dia,
-        //     statusAvisoEnum: StatusAvisoEnum.atrasado,
-        //   );
-        // } else if (i3 == 2) {
-        //   avi = AvisoStatus(
-        //     aviso: avisosDesseMed[i3],
-        //     dia: dia,
-        //     statusAvisoEnum: StatusAvisoEnum.ingerido,
-        //   );
-        // } else {
-        //   avi = AvisoStatus(
-        //     aviso: avisosDesseMed[i3],
-        //     dia: dia,
-        //     statusAvisoEnum: StatusAvisoEnum.antesDeAvisar,
-        //   );
-        // }
-
-        // fazer for checar se tem esse dia e subtituis se necessári
 
         calendarioSemana.medAvisoMap[medicamento].add(avi);
       }
@@ -92,27 +100,7 @@ class TodoDia implements CalendarioSemanaClass {
         calendarioSemana.diaIdMap[dia] = [];
       }
       calendarioSemana.diaIdMap[dia].add(medicamento.id);
-
-      // avisos por dia desse medicamento
-
-      // if (map.containsKey(dia)) {
-      //   //???????????????????????????????????????????
-      //   //   map[dia].add('i2');
-      // } else {
-      //   map.putIfAbsent(dia, () => iDAvisosDoDiaDesseMedicamento);
-      // }
-
-      // ADD NESSE DIA // VER SE ... VER SE TEM DIA SE TIVER ADD SE NAO CRIA
-
     }
-
     return calendarioSemana;
-    // throw UnimplementedError();
   }
 }
-
-// List<dynamic> listaMedicamentosIdsDoDia =
-//   calendarioSemana.diaIdMap[dia] != null
-//       ? calendarioSemana.diaIdMap[dia]
-//       : [];
-//

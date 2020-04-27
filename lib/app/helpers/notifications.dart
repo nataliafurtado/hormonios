@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:Projeto02/app/modules/home/controller.dart';
+import 'package:Projeto02/app/helpers/gerar_notificacoes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -30,7 +30,7 @@ class Notifications {
     if (payload != null) {
       debugPrint('notification payload gggg: ' + payload);
     }
-    Modular.to.pushNamed('/novohormonio');
+    Modular.to.pushNamed('/cheganotificacao/$payload');
     // final controller = Controller();
     // Navigator.pop(context);gg
     // controller.mudarPaginaHormonios();
@@ -70,9 +70,10 @@ class Notifications {
 //     );
   }
 
-  static void notificaPorPushSchedule() async {
-    var scheduledNotificationDateTime =
-        DateTime.now().add(Duration(seconds: 5));
+  static Future<void> notificaPorPushSchedule(DateTime dia, int notId) async {
+    //static Future<void> notificaPorPushSchedule() async {
+    // var scheduledNotificationDateTime =
+    //     DateTime.now().add(Duration(seconds: 3));
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'hormonios1',
@@ -84,13 +85,19 @@ class Notifications {
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
-      1,
+      notId,
       'AVISO TOMAR HORMONIO',
       'NÃO ESQUEÇA',
-      scheduledNotificationDateTime,
+      dia,
       platformChannelSpecifics,
-      payload: 'item x',
+      payload: notId.toString(),
     );
+    log('enviado ' + dia.toIso8601String());
+  }
+
+  static void refazerNotificaPorPushSchedule(DateTime dia, int notId) {
+    cancel(notId);
+    notificaPorPushSchedule(dia, notId);
   }
 
   static void notificaPorPushSP() async {
@@ -148,9 +155,37 @@ class Notifications {
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
 
     for (var item in pendingNotificationRequests) {
-      log(item.title);
-      log(item.id.toString());
+      log(item.title + ' : ' + item.payload + ' :  id ' + item.id.toString());
+      // log(item.id.toString());
     }
     return pendingNotificationRequests;
+  }
+
+  static Future<PendingNotificationRequest> carregaNotificacao(
+      String idNot) async {
+    List<PendingNotificationRequest> pendingNotificationRequests =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+
+    for (var not in pendingNotificationRequests) {
+      if (not.id == int.parse(idNot)) {
+        return not;
+      }
+    }
+    return null;
+  }
+
+  static void cancel(int i) {
+    flutterLocalNotificationsPlugin.cancel(i);
+  }
+
+  static void cancelALL() {
+    log('cancelALL');
+    flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  static void refazerGerarNotificacoes() {
+    log('refazerGerarNotificacoes');
+    flutterLocalNotificationsPlugin.cancelAll();
+    // GerarNotificacoes();
   }
 }

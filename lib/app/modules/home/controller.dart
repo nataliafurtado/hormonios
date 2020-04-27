@@ -1,36 +1,41 @@
-import 'package:mobx/mobx.dart';
-part 'controller.g.dart';
+// import 'dart:developer';
 
-enum Pages { calendario, hormonios }
-class Controller = ControllerBase with _$Controller;
+// import 'package:mobx/mobx.dart';
+// part 'controller.g.dart';
 
-abstract class ControllerBase with Store {
-  @observable
-  int counter = 0;
+// enum Pages { calendario, hormonios }
+// class Controller = ControllerBase with _$Controller;
 
-  @action
-  increment() {
-    counter++;
-  }
+// abstract class ControllerBase with Store {
+//   @observable
+//   int counter = 0;
 
-  @observable
-  Pages mostrarPagina = Pages.calendario;
+//   @action
+//   increment() {
+//     counter++;
+//     counter++;
+//     counter++;
+//     log(counter.toString());
+//   }
 
-  @action
-  void mudarPaginaHormonios() {
-    mostrarPagina = Pages.hormonios;
-  }
+//   @observable
+//   Pages mostrarPagina = Pages.calendario;
 
-  @action
-  void mudarPaginaCalendarios() {
-    mostrarPagina = Pages.calendario;
-  }
+//   @action
+//   void mudarPaginaHormonios() {
+//     mostrarPagina = Pages.hormonios;
+//   }
 
-  @observable
-  String text = '';
+//   @action
+//   void mudarPaginaCalendarios() {
+//     mostrarPagina = Pages.calendario;
+//   }
 
-  @action
-  mudarTexto(String textNovo) {
-    text = textNovo;
-  }
-}
+//   @observable
+//   String text = '';
+
+//   @action
+//   mudarTexto(String textNovo) {
+//     text = textNovo;
+//   }
+// }

@@ -39,6 +39,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_local_notifications: ^1.2.1
+  fluttertoast: ^4.0.1
   
 
 

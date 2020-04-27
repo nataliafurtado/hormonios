@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:Projeto02/app/helpers/dp_helper.dart';
-import 'package:Projeto02/app/models/bundle.dart';
 import 'package:Projeto02/app/models/calendario_semana.dart';
 import 'package:Projeto02/app/models/medicamento.dart';
 import 'package:mobx/mobx.dart';

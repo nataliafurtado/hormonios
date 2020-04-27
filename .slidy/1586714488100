@@ -1,0 +1,5 @@
+lib/app/modules/tomarmedicamento/tomarmedicamento_module.dart
+lib/app/modules/tomarmedicamento/tomarmedicamento_page.dart
+test/app/modules/tomarmedicamento/tomarmedicamento_page_test.dart
+lib/app/modules/tomarmedicamento/tomarmedicamento_controller.dart
+test/app/modules/tomarmedicamento/tomarmedicamento_controller_test.dart

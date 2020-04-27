@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:Projeto02/app/helpers/dp_helper.dart';
+import 'package:Projeto02/app/helpers/notifications.dart';
 import 'package:Projeto02/app/models/bundle.dart';
 import 'package:Projeto02/app/models/medicamento.dart';
 import 'package:mobx/mobx.dart';
@@ -63,6 +64,15 @@ abstract class _ListaHomoniosBase with Store {
 
   apagarMedicamento(int id) {
     _db.deleteMedicamento(medicamentos.id);
+  }
+
+  updateMedicamento() async {
+    log('salvando');
+    int i = await _db.updateMedicamento(medicamentos);
+    Notifications.refazerGerarNotificacoes();
+    _db.apagarNotificacoesEAvisosStatus(medicamentos);
+
+    log('updateMedicamento  ' + i.toString());
   }
 
   @observable

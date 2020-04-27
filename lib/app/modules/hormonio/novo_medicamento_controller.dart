@@ -6,9 +6,10 @@ import 'package:Projeto02/app/models/medicamento.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 
-part 'hormonio_controller.g.dart';
+part 'novo_medicamento_controller.g.dart';
 
-class HormonioController = _HormonioBase with _$HormonioController;
+class NovoMedicamentoController = _HormonioBase
+    with _$NovoMedicamentoController;
 
 abstract class _HormonioBase with Store {
   DBHelper _db = DBHelper();

@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:Projeto02/app/helpers/dp_helper.dart';
 import 'package:Projeto02/app/models/avisos.dart';
+import 'package:Projeto02/app/models/avisos_status.dart';
 import 'package:Projeto02/app/models/calendario_semana.dart';
 import 'package:Projeto02/app/models/medicamento.dart';
 
-class DiasDaSemana implements CalendarioSemanaClass {
+class DiasDaSemana implements CalendarioSemanaClass, NotificacaoClass {
   int id;
   String diasDaSemana;
 
@@ -28,6 +29,13 @@ class DiasDaSemana implements CalendarioSemanaClass {
     // }
     return map;
   }
+
+  @override
+  Future<List<AvisoStatus>> carrega30diasNotificacao(
+    Aviso aviso,
+    DateTime lastMidnight,
+    Medicamento med,
+  ) async {}
 
   @override
   Future<CalendarioSemana> carregaCalendarioSemana(DateTime segundaDessaSEmana,

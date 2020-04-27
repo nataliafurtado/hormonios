@@ -1,4 +1,5 @@
 import 'package:Projeto02/app/models/avisos.dart';
+import 'package:Projeto02/app/models/avisos_status.dart';
 import 'package:Projeto02/app/models/calendario_semana.dart';
 import 'package:Projeto02/app/models/frequencia/dias_da_semana.dart';
 import 'package:Projeto02/app/models/frequencia/todo_dia.dart';
@@ -22,6 +23,7 @@ class Medicamento {
   bool avisarReabastecimento;
   String frequencia;
   CalendarioSemanaClass calendarioSemanaClass;
+  NotificacaoClass notificacaoClass;
 
   Medicamento(
       {this.id,
@@ -41,13 +43,14 @@ class Medicamento {
       this.horaReabasteciemnto,
       this.avisarReabastecimento,
       this.frequencia,
-      this.calendarioSemanaClass});
+      this.calendarioSemanaClass,
+      this.notificacaoClass});
 
   Medicamento.fromMap(Map map) {
     id = map['id'];
     nome = map['nome'];
 
-    if (map['ativo'] == 1) {
+    if (map['ativo'] == 'true') {
       ativo = true;
     } else {
       ativo = false;
@@ -70,7 +73,7 @@ class Medicamento {
 
     avisos = [];
 
-    if (map['avisarReabastecimento'] == 1) {
+    if (map['avisarReabastecimento'] == 'true') {
       avisarReabastecimento = true;
     } else {
       avisarReabastecimento = false;
@@ -78,18 +81,20 @@ class Medicamento {
 
     if (map['frequencia'] == 'TODOS OS DIAS') {
       calendarioSemanaClass = TodoDia();
+      notificacaoClass = TodoDia();
     } else if (map['frequencia'] == 'DIAS ESPECÍFICOS DA SEMANA') {
       calendarioSemanaClass = DiasDaSemana();
+      notificacaoClass = DiasDaSemana();
     } else if (map['frequencia'] == 2) {}
   }
 
   Map toMap() {
     Map<String, dynamic> map = {
-      'ativo': ativo,
+      'ativo': ativo.toString(),
       'nome': nome,
       //  avisos: avisos,
       'dataInicio': dataInicio.toIso8601String(),
-      'dataFim': dataFim.toIso8601String(),
+      'dataFim': dataFim == null ? null : dataFim.toIso8601String(),
       'icone': icone,
       'diasDasemana': diasDasemana,
       'intervaloDeDias': intervaloDeDias,
@@ -101,7 +106,7 @@ class Medicamento {
           quantidadeAntesAvisarReabastecimento,
       'horaReabasteciemnto': horaReabasteciemnto,
       'frequencia': frequencia,
-      'avisarReabastecimento': avisarReabastecimento
+      'avisarReabastecimento': avisarReabastecimento.toString()
     };
     // if (id != null) {
     //   map['id'] = id;
@@ -134,5 +139,13 @@ abstract class CalendarioSemanaClass {
     DateTime segundaDessaSEmana,
     Medicamento medicamento,
     CalendarioSemana calendarioSemana,
+  );
+}
+
+abstract class NotificacaoClass {
+  Future<List<AvisoStatus>> carrega30diasNotificacao(
+    Aviso aviso,
+    DateTime lastMidnight,
+    Medicamento med,
   );
 }

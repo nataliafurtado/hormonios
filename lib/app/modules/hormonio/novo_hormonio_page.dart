@@ -1,6 +1,8 @@
+import 'package:Projeto02/app/helpers/styles.dart';
 import 'package:Projeto02/app/models/avisos.dart';
 import 'package:Projeto02/app/modules/hormonio/aux/alert_dialog_semana.dart';
-import 'package:Projeto02/app/modules/hormonio/hormonio_controller.dart';
+import 'package:Projeto02/app/modules/hormonio/lista_homonios_controller.dart';
+import 'package:Projeto02/app/modules/hormonio/novo_medicamento_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +118,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
   String horaAvisarReabastecimento;
   bool avisarReabastecimento = false;
 
-  final controllerNovoMedicamento = Modular.get<HormonioController>();
+  final controllerNovoMedicamento = Modular.get<NovoMedicamentoController>();
 
   TextEditingController controllerNome = TextEditingController();
   TextEditingController controllerquantidadeAntesAvisarReabastecimento =
@@ -779,7 +781,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                   height: 55,
                   margin: EdgeInsets.only(bottom: 15),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: blueTrans,
                     borderRadius:
                         const BorderRadius.all(const Radius.circular(20)),
                   ),
@@ -795,7 +797,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             mostrarDialogValidacao();
                           } else {
                             salvar();
-                            Modular.to.pushNamed('/');
+                            Modular.to.pushNamed('/listaMedicamentos');
                           }
                         } else {
                           mostrarDialogValidacao();
@@ -943,7 +945,9 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                       },
                       child: Container(
                           child: Text(
-                        _avisos[indexAvisos].hora,
+                        _avisos[indexAvisos].hora.toString() +
+                            ':' +
+                            _avisos[indexAvisos].minuto.toString(),
                         style: TextStyle(
                             color: Colors.blue, fontWeight: FontWeight.bold),
                       ))),
@@ -1565,8 +1569,9 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     );
     if (picked != null) {
       setState(() {
-        _avisos[index].hora =
-            picked.hour.toString() + ':' + picked.minute.toString();
+        _avisos[index].hora = picked.hour;
+        _avisos[index].minuto = picked.minute;
+        //.toString() + ':' + picked.minute.toString();
       });
     }
   }
@@ -1602,7 +1607,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     _avisos.clear();
     setState(() {
       for (var i = 0; i < qtd; i++) {
-        _avisos.add(Aviso(hora: '13:00', qtd: 1));
+        _avisos.add(Aviso(hora: 13, minuto: 00, qtd: 1));
       }
     });
   }
@@ -1613,7 +1618,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     _avisos.clear();
     setState(() {
       for (var i = 0; i < qtd; i++) {
-        _avisos.add(Aviso(hora: '13:00', qtd: 1));
+        _avisos.add(Aviso(hora: 13, minuto: 00, qtd: 1));
       }
     });
   }

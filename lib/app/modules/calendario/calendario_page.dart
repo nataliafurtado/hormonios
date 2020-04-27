@@ -4,9 +4,11 @@ import 'package:Projeto02/app/enums/statusAvisoEnum.dart';
 import 'package:Projeto02/app/helpers/dp_helper.dart';
 import 'package:Projeto02/app/helpers/gerar_notificacoes.dart';
 import 'package:Projeto02/app/helpers/notifications.dart';
+import 'package:Projeto02/app/helpers/styles.dart';
 import 'package:Projeto02/app/models/avisos.dart';
 import 'package:Projeto02/app/models/avisos_status.dart';
 import 'package:Projeto02/app/models/medicamento.dart';
+import 'package:Projeto02/app/modules/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -39,7 +41,7 @@ class _CalendarioPageState extends State<CalendarioPage>
   @override
   void initState() {
     super.initState();
-    log('initiada aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    log('initiada aaaaaaaaaaaaaaaaaaaaa  calendarioa');
     _selectedEvents = [];
     var aux = DateTime.now();
     final hj = new DateTime(aux.year, aux.month, aux.day);
@@ -90,10 +92,43 @@ class _CalendarioPageState extends State<CalendarioPage>
   Widget build(BuildContext context) {
     //final hormoniosController = Provider.of<HormoniosController>(context);
 
-    return Observer(builder: (_) {
-      return Column(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
+    return Scaffold(
+      backgroundColor: Colors.grey.shade100,
+      appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  //stops: [1, 2],
+                  colors: [
+                    blueTrans,
+                    pinkTrans,
+                    Colors.white,
+                    //  Colors.white,
+                    pinkTrans,
+                    blueTrans
+                  ]),
+            ),
+          ),
+          title: Center(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'APP TRANS',
+                style: TextStyle(color: blueTrans.shade900),
+              ),
+              Container(
+                width: 50,
+              )
+            ],
+          ))),
+      body: Observer(
+        builder: (_) {
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
 //           Container(
 //             height: 50,
 //             child: Padding(
@@ -102,70 +137,180 @@ class _CalendarioPageState extends State<CalendarioPage>
 
 //                     //Text('data'),
 
-          RaisedButton(
-            child: Text('1111'),
-            onPressed: () async {
-              Modular.to.pushNamed('/cheganotificacao');
-//               DBHelper _db = DBHelper();
+              RaisedButton(
+                child: Text('1111'),
+                onPressed: () async {
+                  //Modular.to.pushNamed('/cheganotificacao');
+                  DBHelper _db = DBHelper();
 // //controllerCalendario.
 //               List<Aviso> avi = await  _db.getAvisos(1);
 //               AvisoStatus();
+                  // controller.increment();
+                  //  Notifications.notificaPorPushSchedule();
+                  //GerarNotificacoes();
+                  Modular.to.pushNamed('/cheganotificacao/2');
+                  // _db.listAvisoStatus();
+                },
+              ),
 
-              // slidy g c  modules/hormonio/lista_homonios
-              //  Notifications.notificaPorPushSchedule();
-              // GerarNotificacoes();
-            },
-          ),
+              //       ),
+              // ),
 
-          //       ),
-          // ),
+              // Container(
+              //   height: 50,
+              //   child: Padding(
+              //       padding: const EdgeInsets.all(8.0),
+              //       child:
 
-          // Container(
-          //   height: 50,
-          //   child: Padding(
-          //       padding: const EdgeInsets.all(8.0),
-          //       child:
+              //           //Text('data'),
 
-          //           //Text('data'),
+              //           RaisedButton(
+              //         child: Text('p s PER'),
+              //         onPressed: () {
+              //           Notifications.notificaPorPushSP();
+              //         },
+              //       )),
+              // ),
 
-          //           RaisedButton(
-          //         child: Text('p s PER'),
-          //         onPressed: () {
-          //           Notifications.notificaPorPushSP();
-          //         },
-          //       )),
-          // ),
+              // Container(
+              //   height: 50,
+              //   child: Padding(
+              //       padding: const EdgeInsets.all(8.0),
+              //       child:
 
-          // Container(
-          //   height: 50,
-          //   child: Padding(
-          //       padding: const EdgeInsets.all(8.0),
-          //       child:
+              //           //Text('data'),
 
-          //           //Text('data'),
+              //           RaisedButton(
+              //         child: Text('sssssss'),
+              //         onPressed: () {
+              //           Notifications.notificaPorPushS();
+              //         },
+              //       )),
+              // ),
 
-          //           RaisedButton(
-          //         child: Text('sssssss'),
-          //         onPressed: () {
-          //           Notifications.notificaPorPushS();
-          //         },
-          //       )),
-          // ),
+              //
 
-          //
+              //
+              //
+              // começa aqui
+              //
+              _buildTableCalendarWithBuilders(),
+              const SizedBox(height: 8.0),
+              //   _buildButtons(),
+              const SizedBox(height: 8.0),
+              Expanded(child: _buildEventList()),
+            ],
+          );
+        },
+      ),
+      drawer: Drawer(
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text('TRANS.APP'),
+              decoration: BoxDecoration(
+                color: Color(0xffffb5cb),
+              ),
+            ),
+            ListTile(
+              title: Text('CALENDÁRIO'),
+              onTap: () {
+                Navigator.pop(context);
 
-          //
-          //
-          // começa aqui
-          //
-          _buildTableCalendarWithBuilders(),
-          const SizedBox(height: 8.0),
-          //   _buildButtons(),
-          const SizedBox(height: 8.0),
-          Expanded(child: _buildEventList()),
-        ],
-      );
-    });
+                Modular.to.pushNamed('/calendario');
+              },
+            ),
+            ListTile(
+              title: Text('HORMÔNIOS'),
+              onTap: () {
+                Navigator.pop(context);
+                Modular.to.pushNamed('/listaMedicamentos');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+
+//     Observer(builder: (_) {
+//       return Column(
+//         mainAxisSize: MainAxisSize.max,
+//         children: <Widget>[
+// //           Container(
+// //             height: 50,
+// //             child: Padding(
+// //                 padding: const EdgeInsets.all(8.0),
+// //                 child:
+
+// //                     //Text('data'),
+
+//           RaisedButton(
+//             child: Text('1111'),
+//             onPressed: () async {
+//               //Modular.to.pushNamed('/cheganotificacao');
+//               DBHelper _db = DBHelper();
+// // //controllerCalendario.
+// //               List<Aviso> avi = await  _db.getAvisos(1);
+// //               AvisoStatus();
+//               // controller.increment();
+//               //  Notifications.notificaPorPushSchedule();
+//               //GerarNotificacoes();
+//               Modular.to.pushNamed('/cheganotificacao/2');
+//               // _db.listAvisoStatus();
+//             },
+//           ),
+
+//           //       ),
+//           // ),
+
+//           // Container(
+//           //   height: 50,
+//           //   child: Padding(
+//           //       padding: const EdgeInsets.all(8.0),
+//           //       child:
+
+//           //           //Text('data'),
+
+//           //           RaisedButton(
+//           //         child: Text('p s PER'),
+//           //         onPressed: () {
+//           //           Notifications.notificaPorPushSP();
+//           //         },
+//           //       )),
+//           // ),
+
+//           // Container(
+//           //   height: 50,
+//           //   child: Padding(
+//           //       padding: const EdgeInsets.all(8.0),
+//           //       child:
+
+//           //           //Text('data'),
+
+//           //           RaisedButton(
+//           //         child: Text('sssssss'),
+//           //         onPressed: () {
+//           //           Notifications.notificaPorPushS();
+//           //         },
+//           //       )),
+//           // ),
+
+//           //
+
+//           //
+//           //
+//           // começa aqui
+//           //
+//           _buildTableCalendarWithBuilders(),
+//           const SizedBox(height: 8.0),
+//           //   _buildButtons(),
+//           const SizedBox(height: 8.0),
+//           Expanded(child: _buildEventList()),
+//         ],
+//       );
+//     });
   }
 
   // Simple TableCalendar configuration (using Styles)
@@ -270,10 +415,8 @@ class _CalendarioPageState extends State<CalendarioPage>
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         color: _calendarController.isSelected(date)
-            ? Colors.brown[500]
-            : _calendarController.isToday(date)
-                ? Colors.brown[300]
-                : Colors.blue[400],
+            ? pinkTrans
+            : _calendarController.isToday(date) ? Colors.brown[300] : blueTrans,
       ),
       width: 16.0,
       height: 16.0,
@@ -366,11 +509,27 @@ class _CalendarioPageState extends State<CalendarioPage>
                 children: <Widget>[
                   Container(
                     decoration: BoxDecoration(
-                        color: Colors.blue.shade400,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                        )),
+                      //color: blueTrans,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      ),
+                      // gradient: RadialGradient(
+                      //     colors: [Colors.white, pinkTrans, blueTrans],
+                      //     radius: 3),
+                      gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          //stops: [1, 2],
+                          colors: [
+                            blueTrans,
+                            pinkTrans,
+                            Colors.white,
+                            //  Colors.white,
+                            pinkTrans,
+                            blueTrans
+                          ]),
+                    ),
                     height: 45,
                     width: double.infinity,
                     child: Stack(
@@ -380,7 +539,11 @@ class _CalendarioPageState extends State<CalendarioPage>
                             _medSelected.nome,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: blueTrans.shade900,
+                              //  color: Colors.grey.shade600,
+                              // color: Colors.brown.shade500,
+                              //color: pinkTrans.shade500,
+                              letterSpacing: 1,
                               fontSize: 16,
                             ),
                           ),
@@ -443,7 +606,9 @@ class _CalendarioPageState extends State<CalendarioPage>
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Text('Ingerir às'),
-                                          Text(avisoSel.aviso.hora)
+                                          Text(avisoSel.aviso.hora.toString() +
+                                              ':' +
+                                              avisoSel.aviso.minuto.toString())
                                         ],
                                       ),
                                     );
@@ -461,7 +626,10 @@ class _CalendarioPageState extends State<CalendarioPage>
                                                 color: Colors.red.shade400),
                                           ),
                                           Text(
-                                            avisoSel.aviso.hora,
+                                            avisoSel.aviso.hora.toString() +
+                                                ':' +
+                                                avisoSel.aviso.minuto
+                                                    .toString(),
                                             style: TextStyle(
                                                 color: Colors.red.shade400),
                                           )
@@ -482,7 +650,10 @@ class _CalendarioPageState extends State<CalendarioPage>
                                                 color: Colors.green.shade400),
                                           ),
                                           Text(
-                                            avisoSel.aviso.hora,
+                                            avisoSel.aviso.hora.toString() +
+                                                ':' +
+                                                avisoSel.aviso.minuto
+                                                    .toString(),
                                             style: TextStyle(
                                                 color: Colors.green.shade400),
                                           )
