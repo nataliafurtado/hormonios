@@ -35,4 +35,9 @@ class Notificacao {
     // }
     return map;
   }
+
+  @override
+  String toString() {
+    return "NOTIFICAÇÂO(id: $id - dia: $dia -${statusNotificacaoEnum.toString()}";
+  }
 }

@@ -43,4 +43,9 @@ class Aviso {
     // }
     return map;
   }
+
+  @override
+  String toString() {
+    return "AVISO(id: $id-$hora-$minuto-$medicamentoId";
+  }
 }

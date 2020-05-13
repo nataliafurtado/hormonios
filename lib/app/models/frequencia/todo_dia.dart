@@ -39,7 +39,7 @@ class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
     Medicamento med,
   ) async {
     List<AvisoStatus> listAvisoStatus = [];
-
+    //LOGICA CRIA FREQUENCIA
     for (var i2 = 0; i2 < 30; i2++) {
       DateTime diaEhora = new DateTime(
         lastMidnight.year,
@@ -50,10 +50,11 @@ class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
       ).add(Duration(days: i2));
 
       // await _db.deleteAvisosStatus(aviso.id, diaEhora);
-
+      // SE TIVER PEGA AVISOsTATUS
       AvisoStatus avisoStatus = await _db.getAvisosStatus(aviso.id, diaEhora);
+      // SE NÃO TIVER CRIA
       if (avisoStatus == null) {
-        log('cria nova aviso status ');
+        log('CRIADO NOVO AVISOSTATUS DO MED  ${med.nome}');
         avisoStatus = AvisoStatus(
             aviso: aviso,
             dia: diaEhora,
@@ -61,7 +62,7 @@ class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
             statusAvisoEnum: StatusAvisoEnum.antesDeAvisar);
         avisoStatus.id = await _db.saveAvisoStatus(avisoStatus);
       }
-      // log('add avis status ja exixtente ');
+      log('JÁ EXISTE  AVISOSTATUS DO MED  ${med.nome}');
       listAvisoStatus.add(avisoStatus);
     }
 
@@ -83,15 +84,26 @@ class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
       // FAZER AVISOS DESSE MED DESSE POR  DIA
       //PEGAR
       //ARRUMAR NO FOR ABAIXO
-
+      bool addDia = false;
       for (var i3 = 0; i3 < avisosDesseMed.length; i3++) {
-        AvisoStatus avi = AvisoStatus(
-          aviso: avisosDesseMed[i3],
-          dia: dia,
-          statusAvisoEnum: StatusAvisoEnum.antesDeAvisar,
-        );
-
-        calendarioSemana.medAvisoMap[medicamento].add(avi);
+        // AvisoStatus avi = AvisoStatus(
+        //   aviso: avisosDesseMed[i3],
+        //   dia: dia,
+        //   statusAvisoEnum: StatusAvisoEnum.antesDeAvisar,
+        // );
+        AvisoStatus avi = await _db.getAvisosStatus(
+            avisosDesseMed[i3].id,
+            DateTime(
+              dia.year,
+              dia.month,
+              dia.day,
+              avisosDesseMed[i3].hora,
+              avisosDesseMed[i3].minuto,
+            ));
+        if (avi != null) {
+          calendarioSemana.medAvisoMap[medicamento].add(avi);
+          addDia = true;
+        }
       }
       //
 
@@ -99,7 +111,9 @@ class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
       if (calendarioSemana.diaIdMap[dia] == null) {
         calendarioSemana.diaIdMap[dia] = [];
       }
-      calendarioSemana.diaIdMap[dia].add(medicamento.id);
+      if (addDia) {
+        calendarioSemana.diaIdMap[dia].add(medicamento.id);
+      }
     }
     return calendarioSemana;
   }

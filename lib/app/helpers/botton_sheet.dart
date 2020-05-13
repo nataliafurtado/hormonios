@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:Projeto02/app/enums/tomarMedicamentoEnum.dart';
 import 'package:Projeto02/app/helpers/styles.dart';
 import 'package:Projeto02/app/modules/home/controller.dart';
 import 'package:Projeto02/app/modules/tomarmedicamento/tomarmedicamento_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class BottonsSheets {
@@ -78,6 +81,7 @@ class BottonsSheets {
                                   Navigator.pop(context);
 
                                   if (chegaNotificacao) {
+                                    controllerTomaMedicamento.pularTodos(index);
                                   } else {
                                     controllerTomaMedicamento.pular(index,
                                         controllerTomaMedicamento.avisoStatus);
@@ -257,13 +261,11 @@ class BottonsSheets {
                                 Navigator.pop(context);
                                 if (chegaNotificacao) {
                                 } else {
-                                  DateTime dataSelacionada =
-                                      await _selectTimeTomar(
-                                          context,
-                                          controllerTomaMedicamento
-                                              .avisoStatus.dia);
+                                  log('swswswswsws');
+                                  DateTime dataSelecioanda =
+                                      await _selectTimeDataPicker(context);
                                   controllerTomaMedicamento.tomar(
-                                      dataSelacionada,
+                                      dataSelecioanda,
                                       controllerTomaMedicamento.avisoStatus);
                                 }
                               },
@@ -303,6 +305,21 @@ class BottonsSheets {
             ),
           );
         });
+  }
+
+  static Future<DateTime> _selectTimeDataPicker(context) async {
+    DatePicker.showDateTimePicker(
+      context,
+      showTitleActions: true,
+      minTime: DateTime(2020, 1, 1),
+      maxTime: DateTime(2021, 5, 5),
+      onConfirm: (date) {
+        return date;
+      },
+      currentTime: DateTime.now(),
+      locale: LocaleType.pt,
+    );
+    return null;
   }
 
   static Future<DateTime> _selectTimeTomar(
@@ -365,7 +382,7 @@ class BottonsSheets {
   //   }
   // }
 
-  static void adiarBottomSheet(context) {
+  static void adiarBottomSheet(context, chegaNotificacao) {
     final controllerTomaMedicamento = Modular.get<TomarmedicamentoController>();
     final now = DateTime.now();
     // final agora = now.hour.toString() + ":" + now.minute.toString();
@@ -425,9 +442,15 @@ class BottonsSheets {
                               InkWell(
                                 onTap: () {
                                   Navigator.pop(context);
-                                  controllerTomaMedicamento.adiar(
-                                      now.add(Duration(minutes: 5)),
-                                      controllerTomaMedicamento.avisoStatus);
+
+                                  if (chegaNotificacao) {
+                                    controllerTomaMedicamento.adiarTodos(
+                                        now.add(Duration(minutes: 5)));
+                                  } else {
+                                    controllerTomaMedicamento.adiar(
+                                        now.add(Duration(minutes: 5)),
+                                        controllerTomaMedicamento.avisoStatus);
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -460,9 +483,15 @@ class BottonsSheets {
                               InkWell(
                                 onTap: () {
                                   Navigator.pop(context);
-                                  controllerTomaMedicamento.adiar(
-                                      now.add(Duration(minutes: 15)),
-                                      controllerTomaMedicamento.avisoStatus);
+
+                                  if (chegaNotificacao) {
+                                    controllerTomaMedicamento.adiarTodos(
+                                        now.add(Duration(minutes: 15)));
+                                  } else {
+                                    controllerTomaMedicamento.adiar(
+                                        now.add(Duration(minutes: 15)),
+                                        controllerTomaMedicamento.avisoStatus);
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -495,9 +524,14 @@ class BottonsSheets {
                               InkWell(
                                 onTap: () {
                                   Navigator.pop(context);
-                                  controllerTomaMedicamento.adiar(
-                                      now.add(Duration(minutes: 30)),
-                                      controllerTomaMedicamento.avisoStatus);
+                                  if (chegaNotificacao) {
+                                    controllerTomaMedicamento.adiarTodos(
+                                        now.add(Duration(minutes: 30)));
+                                  } else {
+                                    controllerTomaMedicamento.adiar(
+                                        now.add(Duration(minutes: 30)),
+                                        controllerTomaMedicamento.avisoStatus);
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -523,11 +557,14 @@ class BottonsSheets {
                               InkWell(
                                 onTap: () {
                                   Navigator.pop(context);
-                                  controllerTomaMedicamento.adiar(
-                                      now.add(Duration(hours: 1)),
-                                      controllerTomaMedicamento.avisoStatus);
-
-                                  // Modular.to.pushNamed('/');
+                                  if (chegaNotificacao) {
+                                    controllerTomaMedicamento.adiarTodos(
+                                        now.add(Duration(hours: 1)));
+                                  } else {
+                                    controllerTomaMedicamento.adiar(
+                                        now.add(Duration(hours: 1)),
+                                        controllerTomaMedicamento.avisoStatus);
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -553,9 +590,14 @@ class BottonsSheets {
                               InkWell(
                                 onTap: () {
                                   Navigator.pop(context);
-                                  controllerTomaMedicamento.adiar(
-                                      now.add(Duration(hours: 6)),
-                                      controllerTomaMedicamento.avisoStatus);
+                                  if (chegaNotificacao) {
+                                    controllerTomaMedicamento.adiarTodos(
+                                        now.add(Duration(hours: 6)));
+                                  } else {
+                                    controllerTomaMedicamento.adiar(
+                                        now.add(Duration(hours: 6)),
+                                        controllerTomaMedicamento.avisoStatus);
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -581,10 +623,10 @@ class BottonsSheets {
                               InkWell(
                                 onTap: () async {
                                   Navigator.pop(context);
-                                  DateTime dataSelacionada =
-                                      await _selectTimeAdiar(context);
+                                  DateTime dataSelecioanda =
+                                      await _selectTimeDataPicker(context);
                                   controllerTomaMedicamento.adiar(
-                                      dataSelacionada,
+                                      dataSelecioanda,
                                       controllerTomaMedicamento.avisoStatus);
                                 },
                                 child: Padding(

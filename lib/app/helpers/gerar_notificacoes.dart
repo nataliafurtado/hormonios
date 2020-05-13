@@ -32,19 +32,19 @@ class GerarNotificacoes {
 
         for (var i = 0; i < listAvisoStatus.length; i++) {
           if (listAvisoStatus[i].notId == null) {
-            //ve se ja tem uma noti desse dia e hora  no banco
+            //VER SE JA TEM NOTIFICAÇÃO NESSE DIA E HORA SALVA NO BANCO
             Notificacao notificacao =
                 await _db.getNotificacao(listAvisoStatus[i].dia);
-            //se ja exixte notStatus
+            //SE JÁ EXISTE NOTIFICAÇÃO ADD AVISOSTATUS
             if (notificacao != null) {
-              // // ver sa ja foi add antes
+              log('SE JÁ EXISTE NOTIFICAÇÃO ADD AVISOSTATUS');
               // AvisoStatus avisJaTinha = notificacao.avisosStatus
               //     .firstWhere((notStat) => notStat.id == listAvisoStatus[i].id);
               // // se não foi add
               // if (avisJaTinha == null) {
               notificacao.avisosStatus.add(listAvisoStatus[i]);
             } else {
-              // senao tiver criar add
+              // SENÃO TIVER CRIA ADD E SALVA
               notificacao = Notificacao(
                 dia: listAvisoStatus[i].dia,
                 statusNotificacaoEnum: StatusNotificacoesEnum.enviada,

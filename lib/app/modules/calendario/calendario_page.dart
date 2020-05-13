@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:Projeto02/app/enums/statusAvisoEnum.dart';
 import 'package:Projeto02/app/helpers/dp_helper.dart';
+import 'package:Projeto02/app/helpers/drawer.dart';
 import 'package:Projeto02/app/helpers/gerar_notificacoes.dart';
 import 'package:Projeto02/app/helpers/notifications.dart';
+import 'package:Projeto02/app/helpers/sql.dart';
 import 'package:Projeto02/app/helpers/styles.dart';
 import 'package:Projeto02/app/models/avisos.dart';
 import 'package:Projeto02/app/models/avisos_status.dart';
@@ -145,10 +147,31 @@ class _CalendarioPageState extends State<CalendarioPage>
 // //controllerCalendario.
 //               List<Aviso> avi = await  _db.getAvisos(1);
 //               AvisoStatus();
+                  // Sql().listaAvisos();
+                  Sql().listaAvisoStatus();
+                  // Sql().listaNotificacoes();
+                  // Notifications.cancelALL();
                   // controller.increment();
                   //  Notifications.notificaPorPushSchedule();
                   //GerarNotificacoes();
-                  Modular.to.pushNamed('/cheganotificacao/2');
+                  //  Modular.to.pushNamed('/cheganotificacao/1');
+                  // _db.listAvisoStatus();
+                },
+              ),
+              RaisedButton(
+                child: Text('222222'),
+                onPressed: () async {
+                  //Modular.to.pushNamed('/cheganotificacao');
+                  DBHelper _db = DBHelper();
+// //controllerCalendario.
+//               List<Aviso> avi = await  _db.getAvisos(1);
+//               AvisoStatus();
+                  Sql().listaAvisoStatus();
+                  // Sql().listaNotificacoes();
+                  // controller.increment();
+                  //  Notifications.notificaPorPushSchedule();
+                  //GerarNotificacoes();
+
                   // _db.listAvisoStatus();
                 },
               ),
@@ -203,35 +226,7 @@ class _CalendarioPageState extends State<CalendarioPage>
           );
         },
       ),
-      drawer: Drawer(
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('TRANS.APP'),
-              decoration: BoxDecoration(
-                color: Color(0xffffb5cb),
-              ),
-            ),
-            ListTile(
-              title: Text('CALENDÁRIO'),
-              onTap: () {
-                Navigator.pop(context);
-
-                Modular.to.pushNamed('/calendario');
-              },
-            ),
-            ListTile(
-              title: Text('HORMÔNIOS'),
-              onTap: () {
-                Navigator.pop(context);
-                Modular.to.pushNamed('/listaMedicamentos');
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: DrawerWidget.drawer(context),
     );
 
 //     Observer(builder: (_) {
@@ -494,6 +489,8 @@ class _CalendarioPageState extends State<CalendarioPage>
               .calendarioSemana.medAvisoMap[_medSelected]
               .where((ee) => ee.dia.day == _selectDay.day);
 
+          log('sssss' + _avisosSelect.toString());
+
           ///AGRUPAR POR HORA
 
           return Padding(
@@ -596,7 +593,8 @@ class _CalendarioPageState extends State<CalendarioPage>
                                 itemBuilder: (ctx, indexAviso) {
                                   AvisoStatus avisoSel =
                                       _avisosSelect.elementAt(indexAviso);
-
+                                  log(' aviso sel :::::::' +
+                                      avisoSel.toString());
                                   if (avisoSel.statusAvisoEnum ==
                                       StatusAvisoEnum.antesDeAvisar) {
                                     return Container(

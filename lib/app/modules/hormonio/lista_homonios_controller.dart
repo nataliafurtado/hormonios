@@ -63,7 +63,8 @@ abstract class _ListaHomoniosBase with Store {
   }
 
   apagarMedicamento(int id) {
-    _db.deleteMedicamento(medicamentos.id);
+    _db.deleteMedicamento(medicamentos);
+    Notifications.refazerGerarNotificacoes();
   }
 
   updateMedicamento() async {

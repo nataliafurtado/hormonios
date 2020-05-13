@@ -1,21 +1,16 @@
 // import 'package:Projeto02/app/modules/hormonios/hormonios_controller.dart';
 // import 'package:Projeto02/app/modules/hormonios/novo_hormonio_controller.dart';
 //import 'package:Projeto02/app/modules/hormonios/hormonios_page.dart';
+import 'package:Projeto02/app/app_widget.dart';
 import 'package:Projeto02/app/modules/calendario/calendario_module.dart';
-import 'package:Projeto02/app/modules/cheganotificacao/cheganotificacao_controller.dart';
-import 'package:Projeto02/app/modules/cheganotificacao/cheganotificacao_page.dart';
 import 'package:Projeto02/app/modules/hormonio/lista_medicamento_module.dart';
-import 'package:Projeto02/app/modules/hormonio/lista_medicamento_page.dart';
-import 'package:Projeto02/app/modules/hormonio/lista_homonios_controller.dart';
 import 'package:Projeto02/app/modules/hormonio/medicamento_page.dart';
 import 'package:Projeto02/app/modules/hormonio/novo_hormonio_page.dart';
 import 'package:Projeto02/app/modules/tomarmedicamento/cheganotificacao_page.dart';
 import 'package:Projeto02/app/modules/tomarmedicamento/tomarmedicamento_controller.dart';
 import 'package:Projeto02/app/modules/tomarmedicamento/tomarmedicamento_page.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter/material.dart';
-import 'package:Projeto02/app/app_widget.dart';
-import 'package:Projeto02/app/modules/home/home_module.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class AppModule extends MainModule {
   @override

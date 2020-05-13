@@ -5,7 +5,7 @@ import 'package:Projeto02/app/models/medicamento.dart';
 
 class AvisoStatus {
   Aviso aviso;
-
+  int avisoId;
   int id;
   DateTime dia;
   DateTime horaIngerido;
@@ -26,6 +26,7 @@ class AvisoStatus {
         ? null
         : DateTime.parse(map['horaIngerido']);
     notId = map['notId'];
+    avisoId = map['avisoId'];
     statusAvisoEnum =
         StatusAvisoEnumConverter().enumConverter(map['statusAvisoEnum']);
     pularEnum = PularEnumConverter().enumConverter(map['pularEnum']);
@@ -49,6 +50,7 @@ class AvisoStatus {
 
   @override
   String toString() {
-    return "AVISOSTATUS(id: $id - dia: $dia - notId: $notId)  ";
+    return "AVISOSTATUS(id: $id-$dia horaingerido:-$horaIngerido-${statusAvisoEnum.toString()}" +
+        " - ${pularEnum.toString()} - $numeroAdiadas -  notId: $notId , avisoID $avisoId)  ";
   }
 }

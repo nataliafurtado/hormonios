@@ -1,15 +1,7 @@
 import 'package:Projeto02/app/modules/calendario/calendario_controller.dart';
 import 'package:Projeto02/app/modules/calendario/calendario_page.dart';
-import 'package:Projeto02/app/modules/cheganotificacao/cheganotificacao_controller.dart';
-import 'package:Projeto02/app/modules/home/controller.dart';
-import 'package:Projeto02/app/modules/hormonio/lista_medicamento_module.dart';
-import 'package:Projeto02/app/modules/hormonio/lista_homonios_controller.dart';
-import 'package:Projeto02/app/modules/hormonio/lista_medicamento_page.dart';
-import 'package:Projeto02/app/modules/hormonio/novo_hormonio_page.dart';
-import 'package:Projeto02/app/modules/tomarmedicamento/tomarmedicamento_controller.dart';
+
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:Projeto02/app/modules/home/home_page.dart';
-import 'package:Projeto02/app/modules/hormonio/medicamento_page.dart';
 
 //import 'package:Projeto02/app/modules/hormonios/hormonios_module.dart';
 

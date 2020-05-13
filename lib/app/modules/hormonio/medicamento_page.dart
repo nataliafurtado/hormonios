@@ -42,10 +42,10 @@ class _MedicamentoPageState extends State<MedicamentoPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(FontAwesomeIcons.trash),
-            onPressed: () {
-              Navigator.of(context).pop();
-              controllerListaHormonios
+            onPressed: () async {
+              await controllerListaHormonios
                   .apagarMedicamento(controllerListaHormonios.medicamentos.id);
+              Modular.to.pushNamed('/calendario');
             },
           ),
           IconButton(

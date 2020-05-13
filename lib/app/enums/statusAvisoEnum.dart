@@ -18,13 +18,13 @@ class StatusAvisoEnumConverter {
   }
 
   StatusAvisoEnum enumConverter(String enumString) {
-    if (enumString == 'statusAvisoEnum.antesDeAvisar') {
+    if (enumString == 'StatusAvisoEnum.antesDeAvisar') {
       return StatusAvisoEnum.antesDeAvisar;
-    } else if (enumString == 'statusAvisoEnum.pulado') {
+    } else if (enumString == 'StatusAvisoEnum.pulado') {
       return StatusAvisoEnum.pulado;
-    } else if (enumString == 'statusAvisoEnum.ingerido') {
+    } else if (enumString == 'StatusAvisoEnum.ingerido') {
       return StatusAvisoEnum.ingerido;
-    } else if (enumString == 'statusAvisoEnum.atrasado') {
+    } else if (enumString == 'StatusAvisoEnum.atrasado') {
       return StatusAvisoEnum.atrasado;
     }
 

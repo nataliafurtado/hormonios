@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:Projeto02/app/enums/statusAvisoEnum.dart';
 import 'package:Projeto02/app/helpers/botton_sheet.dart';
 import 'package:Projeto02/app/helpers/styles.dart';
 import 'package:flutter/material.dart';
@@ -286,7 +287,11 @@ class _TomarmedicamentoPageState
 
   Widget botao5minutos() {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        final now = DateTime.now();
+        controllerTomaMedicamento.adiar(now.add(Duration(minutes: 5)),
+            controllerTomaMedicamento.avisoStatus);
+      },
       child: Padding(
         padding: const EdgeInsets.only(top: 0, left: 20, right: 20),
         child: Card(
@@ -369,8 +374,15 @@ class _TomarmedicamentoPageState
           ),
           InkWell(
             onTap: () {
-              BottonsSheets.tomarBottomSheet(context, montarDataHora(),
-                  controllerTomaMedicamento.avisoStatus.dia, false);
+              if (controllerTomaMedicamento.avisoStatus.statusAvisoEnum ==
+                  StatusAvisoEnum.atrasado) {
+                BottonsSheets.tomarBottomSheet(context, montarDataHora(),
+                    controllerTomaMedicamento.avisoStatus.dia, false);
+              } else {
+                final now = DateTime.now();
+                controllerTomaMedicamento.tomar(
+                    now, controllerTomaMedicamento.avisoStatus);
+              }
             },
             child: Container(
               height: 90,
@@ -398,7 +410,7 @@ class _TomarmedicamentoPageState
           ),
           InkWell(
             onTap: () {
-              BottonsSheets.adiarBottomSheet(context);
+              BottonsSheets.adiarBottomSheet(context, false);
               // Modular.to.pushNamed('/');
               // Modular.to.pushNamedAndRemoveUntil(
               //     '/', (Route<dynamic> route) => false);

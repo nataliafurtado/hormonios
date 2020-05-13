@@ -30,6 +30,7 @@ class Notifications {
     if (payload != null) {
       debugPrint('notification payload gggg: ' + payload);
     }
+    log('merda m,erda mar $payload');
     Modular.to.pushNamed('/cheganotificacao/$payload');
     // final controller = Controller();
     // Navigator.pop(context);gg

@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:Projeto02/app/enums/statusAvisoEnum.dart';
 import 'package:Projeto02/app/helpers/botton_sheet.dart';
 import 'package:Projeto02/app/helpers/styles.dart';
 import 'package:Projeto02/app/modules/tomarmedicamento/tomarmedicamento_controller.dart';
@@ -131,8 +130,12 @@ class _CheganotificacaoPageState
                                     return Card(
                                       child: ListTile(
                                         onTap: () {
+                                          int id = controllerChegaNotificacao
+                                              .notificacao
+                                              .avisosStatus[index]
+                                              .id;
                                           Modular.to
-                                              .pushNamed('/tomarmedicacao/2');
+                                              .pushNamed('/tomarmedicacao/$id');
                                         },
                                         leading: Icon(IconData(
                                             controllerChegaNotificacao
@@ -162,6 +165,7 @@ class _CheganotificacaoPageState
                       ],
                     ),
                   ),
+            botao5minutos(),
             transIconContainer(),
           ],
         );
@@ -213,58 +217,115 @@ class _CheganotificacaoPageState
               ),
             ),
           ),
-          Container(
-            height: 90,
-            width: MediaQuery.of(context).size.width * 0.25,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Icon(
-                  Icons.check_circle,
-                  color: iconsText,
-                  size: iconSize,
-                ),
-                Text(
-                  'TOMAR\nTODOS',
-                  style: TextStyle(
-                    color: iconsText,
-                    fontSize: fontSize,
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            height: 100,
-            width: MediaQuery.of(context).size.width * 0.25,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Icon(
-                    Icons.watch_later,
+          InkWell(
+            onTap: () {
+              if (controllerChegaNotificacao
+                      .notificacao.avisosStatus[0].statusAvisoEnum ==
+                  StatusAvisoEnum.atrasado) {
+              } else {
+                controllerChegaNotificacao.tomarTodos(DateTime.now());
+              }
+            },
+            child: Container(
+              height: 90,
+              width: MediaQuery.of(context).size.width * 0.25,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Icon(
+                    Icons.check_circle,
                     color: iconsText,
                     size: iconSize,
                   ),
-                ),
-                Text(
-                  'ADIAR',
-                  style: TextStyle(
-                    color: iconsText,
-                    fontSize: fontSize,
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.bold,
+                  Text(
+                    'TOMAR\nTODOS',
+                    style: TextStyle(
+                      color: iconsText,
+                      fontSize: fontSize,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              BottonsSheets.adiarBottomSheet(context, true);
+            },
+            child: Container(
+              height: 90,
+              width: MediaQuery.of(context).size.width * 0.25,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 0),
+                    child: Icon(
+                      Icons.watch_later,
+                      color: iconsText,
+                      size: iconSize,
+                    ),
+                  ),
+                  Text(
+                    'ADIAR\nTODOS',
+                    style: TextStyle(
+                      color: iconsText,
+                      fontSize: fontSize,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
       ),
       //  ),
+    );
+  }
+
+  Widget botao5minutos() {
+    return InkWell(
+      onTap: () {
+        final now = DateTime.now();
+        controllerChegaNotificacao.adiarTodos(now.add(Duration(minutes: 5)));
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 0, left: 20, right: 20),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          elevation: 2,
+          child: Container(
+            height: 90,
+            width: double.infinity,
+            // width: MediaQuery.of(context).size.width * 0.5,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Icon(
+                  Icons.watch_later,
+                  color: iconsText,
+                  size: iconSize,
+                ),
+                Text(
+                  'ADIAR 5 MINUTOS',
+                  style: TextStyle(
+                    color: iconsText,
+                    fontSize: fontSize,
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 

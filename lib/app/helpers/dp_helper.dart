@@ -66,7 +66,7 @@ class DBHelper {
 
   Future<Database> initDb() async {
     final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, "listas21.db");
+    final path = join(databasesPath, "listas24.db");
     // print(path);
 
     return await openDatabase(path, version: 1,
@@ -131,6 +131,26 @@ class DBHelper {
     }
   }
 
+  Future<void> apagarTUDONotificacoesEAvisosStatus(
+      Medicamento medicamento) async {
+    log('APAGANDO RESTOS  DE MEDICAMENTO');
+    Database dbTrans = await db;
+    final now = DateTime.now();
+    List<AvisoStatus> listaAvisoStatus = [];
+    for (var aviso in medicamento.avisos) {
+      log('aviso id : ' + aviso.id.toString());
+      listaAvisoStatus.addAll(await getAvisoStatusNotIdSimples(aviso.id));
+    }
+    for (AvisoStatus aviSta in listaAvisoStatus) {
+      log('aviSta' + aviSta.id.toString());
+      await dbTrans
+          .rawDelete("DELETE FROM $_notificacoes  where $_id=${aviSta.notId}");
+
+      await dbTrans
+          .rawDelete("DELETE FROM $_avisosStatus  where $_id=${aviSta.id}");
+    }
+  }
+
   Future<List<AvisoStatus>> getAvisoStatusNotIdSimples(
       int idpassadoinferno) async {
     Database dbTrans = await db;
@@ -161,15 +181,49 @@ class DBHelper {
     Database dbTrans = await db;
     // log(aviSta.toString() + ' not id ');
     int i = await dbTrans.rawUpdate(
-        'UPDATE $_avisosStatus SET $_dia= ?, $_statusAvisoEnum= ?,$_numeroAdiadas= ?,$_notId= ? WHERE $_id=?',
+        'UPDATE $_avisosStatus SET $_dia= ?, $_statusAvisoEnum= ?,$_numeroAdiadas= ?,$_notId= ?,$_horaIngerido=?,$_pularEnum=? WHERE $_id=?',
         [
           aviSta.dia.toIso8601String(),
           aviSta.statusAvisoEnum.toString(),
           aviSta.numeroAdiadas,
           aviSta.notId,
+          aviSta.horaIngerido == null
+              ? null
+              : aviSta.horaIngerido.toIso8601String(),
+          aviSta.pularEnum.toString(),
           aviSta.id
         ]);
+    log('upadate aviso status  $i');
   }
+
+  Future<void> updateSimplesAvisoStatus2(AvisoStatus aviSta) async {
+    // Database dbTrans = await db;
+    // // log(aviSta.toString() + ' not id ');
+    // int i = await dbTrans.rawUpdate(
+    //     'UPDATE $_avisosStatus SET $_dia= ?, $_statusAvisoEnum= ?,$_numeroAdiadas= ?,$_notId= ?,$_horaIngerido=?,$_pularEnum=? WHERE $_id=?',
+    //     [
+    //       aviSta.dia.toIso8601String(),
+    //       aviSta.statusAvisoEnum.toString(),
+    //       aviSta.numeroAdiadas,
+    //       aviSta.notId,
+    //       aviSta.id,
+    //       aviSta.horaIngerido.toIso8601String(),
+    //       aviSta.pularEnum.toString()
+    //     ]);
+
+    Database dbTrans = await db;
+    dbTrans.update(_avisosStatus, aviSta.toMap(),
+        where: "$_id = ?", whereArgs: [aviSta.id]);
+  }
+
+//   final String _avisosStatus = 'avisosStatus';
+// final String _avisoId = 'avisoId';
+// final String _dia = 'dia';
+// final String _horaIngerido = 'horaIngerido';
+// final String _statusAvisoEnum = 'statusAvisoEnum';
+// final String _pularEnum = 'pularEnum';
+// final String _numeroAdiadas = 'numeroAdiadas';
+// final String _notId = 'notId';
 
   Future<void> updateAvisos(List lista) async {
     Database dbTrans = await db;
@@ -238,7 +292,7 @@ class DBHelper {
 
     if (maps.length > 0) {
       Notificacao not = Notificacao.fromMap(maps.first);
-      not.avisosStatus.addAll(await getAvisosStatusNotId(not.id, false, true));
+      not.avisosStatus.addAll(await getAvisosStatusNotId(not.id, true, true));
       return not;
     } else {
       return null;
@@ -380,12 +434,22 @@ class DBHelper {
   //   return list;
   // }
 
-  Future<int> deleteMedicamento(int idd) async {
+  Future<int> deleteMedicamento(Medicamento medApagar) async {
     Database dbtrans = await db;
-    return await dbtrans
-        .rawDelete('DELETE FROM $_medicamentos WHERE $_id = ?', [idd]);
-    // return await dbtrans
-    //     .delete(_medicamentos, where: "$id = ?", whereArgs: [idd]);
+    await apagarTUDONotificacoesEAvisosStatus(medApagar);
+    for (var i = 0; i < medApagar.avisos.length; i++) {
+      await deleteAviso(medApagar.avisos[i]);
+    }
+    int idApagado = await dbtrans
+        .rawDelete('DELETE FROM $_medicamentos WHERE $_id = ?', [medApagar.id]);
+    return idApagado;
+  }
+
+  Future<int> deleteAviso(avisoApagar) async {
+    Database dbtrans = await db;
+    int idApagado = await dbtrans
+        .rawDelete('DELETE FROM $_avisos WHERE $_id = ?', [avisoApagar.id]);
+    return idApagado;
   }
 
   Future<List> getAllMedicamentos() async {
