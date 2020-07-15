@@ -20,9 +20,9 @@ class Aviso {
 
   Aviso.fromMap(Map map) {
     id = map['id'];
-    hora = map['hora'];
-    minuto = map['minuto'];
-    qtd = map['qtd'];
+    hora = map['hora'] ?? "";
+    minuto = map['minuto'] ?? "";
+    qtd = map['qtd'] ?? "";
     medicamentoId = map['medicamentoId'];
     // dia = map['dia'];
     // statusAvisoEnum =

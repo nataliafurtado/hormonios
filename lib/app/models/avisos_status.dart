@@ -4,16 +4,16 @@ import 'package:Projeto02/app/models/avisos.dart';
 import 'package:Projeto02/app/models/medicamento.dart';
 
 class AvisoStatus {
-  Aviso aviso;
   int avisoId;
+  int notId;
+  Medicamento medicamento;
+  Aviso aviso;
+  StatusAvisoEnum statusAvisoEnum;
   int id;
   DateTime dia;
   DateTime horaIngerido;
-  StatusAvisoEnum statusAvisoEnum;
   PularEnum pularEnum;
   int numeroAdiadas;
-  int notId;
-  Medicamento medicamento;
 
   AvisoStatus(
       {this.aviso, this.dia, this.statusAvisoEnum, this.id, this.medicamento});

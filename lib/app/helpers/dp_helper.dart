@@ -28,6 +28,7 @@ final String _quantidadeAntesAvisarReabastecimento =
 final String _horaReabasteciemnto = 'horaReabasteciemnto';
 final String _frequencia = 'frequencia';
 final String _avisarReabastecimento = 'avisarReabastecimento';
+final String _dataUltimaAtualizacao = 'dataUltimaAtualizacao';
 
 // CLASSE AVISO
 final String _avisos = 'avisos';
@@ -66,26 +67,28 @@ class DBHelper {
 
   Future<Database> initDb() async {
     final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, "listas24.db");
+    final path = join(databasesPath, "listas26.db");
     // print(path);
 
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
       await db.execute(
-          "CREATE TABLE $_medicamentos($_id INTEGER PRIMARY KEY, $_nome TEXT," +
-              "$_ativo BOOLEAN,$_dataInicio TEXT,$_dataFim TEXT,$_icone INT,$_diasDasemana TEXT," +
+          "CREATE TABLE $_medicamentos($_id INTEGER PRIMARY KEY AUTOINCREMENT, $_nome TEXT," +
+              "$_ativo BOOLEAN,$_dataUltimaAtualizacao TEXT,$_dataInicio TEXT,$_dataFim TEXT,$_icone INT,$_diasDasemana TEXT," +
               "$_intervaloDeDias INT,$_dosagem int,$_observacoes TEXT,$_estoque INT," +
-              "$_quantidadeAntesAvisarReabastecimento INT,$_horaReabasteciemnto TEXT,$_frequencia TEXT,$_medida TEXT,$_avisarReabastecimento BOOLEAN)");
+              "$_quantidadeAntesAvisarReabastecimento INT,$_horaReabasteciemnto TEXT,$_frequencia TEXT," +
+              "$_medida TEXT,$_avisarReabastecimento BOOLEAN)");
 
       await db.execute(
-          "CREATE TABLE $_avisos($_id INTEGER PRIMARY KEY, $_hora INT,$_minuto INT," +
+          "CREATE TABLE $_avisos($_id INTEGER PRIMARY KEY AUTOINCREMENT, $_hora INT,$_minuto INT," +
               "$_qtd INT,$_medicamentoId INT )");
       await db.execute(
-          "CREATE TABLE $_avisosStatus($_id INTEGER PRIMARY KEY, $_avisoId INT," +
+          "CREATE TABLE $_avisosStatus ($_id INTEGER PRIMARY KEY AUTOINCREMENT, $_avisoId INT," +
               "$_dia TEXT,$_horaIngerido TEXT,$_statusAvisoEnum TEXT,$_pularEnum TEXT,$_numeroAdiadas INT,$_notId INT,$_medicamentoId INT)");
 
-      await db.execute("CREATE TABLE $_notificacoes($_id INTEGER PRIMARY KEY," +
-          "$_dia TEXT,$_statusNotificacaoEnum TEXT)");
+      await db.execute(
+          "CREATE TABLE $_notificacoes($_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+              "$_dia TEXT,$_statusNotificacaoEnum TEXT)");
     });
   }
 
@@ -101,10 +104,12 @@ class DBHelper {
     return i;
   }
 
-  Future<int> updateMedicamento(Medicamento medicamento) async {
+  Future<int> updateMedicamento(
+      Medicamento medicamento, bool salvarAviso) async {
     Database dbTrans = await db;
-    log('salvand acv avisoss ');
-    updateAvisos(medicamento.avisos);
+    if (salvarAviso) {
+      updateAvisos(medicamento.avisos);
+    }
     return await dbTrans.update(_medicamentos, medicamento.toMap(),
         where: "$_id = ?", whereArgs: [medicamento.id]);
   }
@@ -149,6 +154,8 @@ class DBHelper {
       await dbTrans
           .rawDelete("DELETE FROM $_avisosStatus  where $_id=${aviSta.id}");
     }
+
+    await dbTrans.rawDelete("DELETE FROM $_notificacoes");
   }
 
   Future<List<AvisoStatus>> getAvisoStatusNotIdSimples(
@@ -471,7 +478,9 @@ class DBHelper {
         "SELECT * FROM $_medicamentos m where m.$_dataInicio < '$now' and (m.$_dataFim is null or m.$_dataFim > '$now') ");
     List<Medicamento> list = List();
     for (Map m in listMap) {
-      list.add(Medicamento.fromMap(m));
+      Medicamento med = Medicamento.fromMap(m);
+      med.avisos = await getAvisos(med.id);
+      list.add(med);
     }
 
     return list;
@@ -491,6 +500,19 @@ class DBHelper {
     }
 
     return list;
+  }
+
+  Future<AvisoStatus> getUltimoAvisoStatus(Medicamento med) async {
+    Database dbTrans = await db;
+    List<Map> maps = await dbTrans
+        .rawQuery('SELECT * FROM $_avisosStatus ORDER BY $_dia DESC LIMIT 1');
+    if (maps.length > 0) {
+      AvisoStatus aviss = AvisoStatus.fromMap(maps.first);
+      log('Ultimo aviso status ddd ' + aviss.toString());
+      return aviss;
+    } else {
+      return null;
+    }
   }
 
   // Future<Item> getItem(String caminho) async {

@@ -8,7 +8,7 @@ import 'package:Projeto02/app/models/calendario_semana.dart';
 
 import 'package:Projeto02/app/models/medicamento.dart';
 
-class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
+class TodoDia implements Frequencia {
   int id;
   // int tempoToma;
 
@@ -33,13 +33,16 @@ class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
   DBHelper _db = DBHelper();
 
   @override
-  Future<List<AvisoStatus>> carrega30diasNotificacao(
+  Future<List<AvisoStatus>> carregaAvisoStatus(
     Aviso aviso,
     DateTime lastMidnight,
     Medicamento med,
   ) async {
     List<AvisoStatus> listAvisoStatus = [];
     //LOGICA CRIA FREQUENCIA
+    if (seJapassouhoraavisoPulaPrimeirodia(aviso)) {
+      lastMidnight.add(Duration(days: 1));
+    }
     for (var i2 = 0; i2 < 30; i2++) {
       DateTime diaEhora = new DateTime(
         lastMidnight.year,
@@ -49,7 +52,6 @@ class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
         aviso.minuto,
       ).add(Duration(days: i2));
 
-      // await _db.deleteAvisosStatus(aviso.id, diaEhora);
       // SE TIVER PEGA AVISOsTATUS
       AvisoStatus avisoStatus = await _db.getAvisosStatus(aviso.id, diaEhora);
       // SE NÃO TIVER CRIA
@@ -76,6 +78,7 @@ class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
     CalendarioSemana calendarioSemana,
   ) async {
     // SEMANA COMEÇANDO NA SEGUNDA
+    final now = DateTime.now();
     for (var i2 = 0; i2 < 7; i2++) {
       DateTime dia = segundaDessaSEmana.add(Duration(days: i2));
       //  AVISOS DESSE MEDICAMENTO
@@ -91,16 +94,24 @@ class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
         //   dia: dia,
         //   statusAvisoEnum: StatusAvisoEnum.antesDeAvisar,
         // );
-        AvisoStatus avi = await _db.getAvisosStatus(
-            avisosDesseMed[i3].id,
-            DateTime(
-              dia.year,
-              dia.month,
-              dia.day,
-              avisosDesseMed[i3].hora,
-              avisosDesseMed[i3].minuto,
-            ));
+        DateTime diaMontado = DateTime(
+          dia.year,
+          dia.month,
+          dia.day,
+          avisosDesseMed[i3].hora,
+          avisosDesseMed[i3].minuto,
+        );
+        AvisoStatus avi =
+            await _db.getAvisosStatus(avisosDesseMed[i3].id, diaMontado);
         if (avi != null) {
+          calendarioSemana.medAvisoMap[medicamento].add(avi);
+          addDia = true;
+        } else if (dia.isAfter(now)) {
+          avi = AvisoStatus(
+              aviso: avisosDesseMed[i3],
+              dia: diaMontado,
+              medicamento: medicamento,
+              statusAvisoEnum: StatusAvisoEnum.antesDeAvisar);
           calendarioSemana.medAvisoMap[medicamento].add(avi);
           addDia = true;
         }
@@ -116,5 +127,16 @@ class TodoDia implements CalendarioSemanaClass, NotificacaoClass {
       }
     }
     return calendarioSemana;
+  }
+
+  bool seJapassouhoraavisoPulaPrimeirodia(Aviso aviso) {
+    var aux = DateTime.now();
+    if (aviso.hora > aux.hour) {
+      return true;
+    } else if (aviso.hora == aux.hour && aviso.minuto > aux.minute) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

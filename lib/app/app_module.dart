@@ -2,6 +2,7 @@
 // import 'package:Projeto02/app/modules/hormonios/novo_hormonio_controller.dart';
 //import 'package:Projeto02/app/modules/hormonios/hormonios_page.dart';
 import 'package:Projeto02/app/app_widget.dart';
+import 'package:Projeto02/app/helpers/sql_teste.dart';
 import 'package:Projeto02/app/modules/calendario/calendario_module.dart';
 import 'package:Projeto02/app/modules/hormonio/lista_medicamento_module.dart';
 import 'package:Projeto02/app/modules/hormonio/medicamento_page.dart';
@@ -48,6 +49,8 @@ class AppModule extends MainModule {
             id: args.params['id'],
           ),
         ),
+
+        Router('/sql', child: (_, args) => SqlTeste()),
         //   Router('/novohormonio', child: (_, args) => NovoHormonioPage()),
         //    Router('/', module: MedicamentoModule()),
       ];

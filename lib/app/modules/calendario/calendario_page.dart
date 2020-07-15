@@ -46,8 +46,8 @@ class _CalendarioPageState extends State<CalendarioPage>
     log('initiada aaaaaaaaaaaaaaaaaaaaa  calendarioa');
     _selectedEvents = [];
     var aux = DateTime.now();
-    final hj = new DateTime(aux.year, aux.month, aux.day);
-    controllerCalendario.carregarCalendario();
+    //final hj = new DateTime(aux.year, aux.month, aux.day);
+    controllerCalendario.carregarCalendario(null);
     // .then((value) {
     //   _onDaySelected(hj, controllerCalendario.events[hj]);
     // });
@@ -87,6 +87,8 @@ class _CalendarioPageState extends State<CalendarioPage>
   void _onVisibleDaysChanged(
       DateTime first, DateTime last, CalendarFormat format) {
     print('CALLBACK: _onVisibleDaysChanged');
+    controllerCalendario.carregarCalendario(first);
+    _selectedEvents = [];
   }
 
   // final ff = Modular.get<>();
@@ -148,12 +150,12 @@ class _CalendarioPageState extends State<CalendarioPage>
 //               List<Aviso> avi = await  _db.getAvisos(1);
 //               AvisoStatus();
                   // Sql().listaAvisos();
-                  Sql().listaAvisoStatus();
+                  // Sql().listaAvisoStatus();
                   // Sql().listaNotificacoes();
                   // Notifications.cancelALL();
                   // controller.increment();
                   //  Notifications.notificaPorPushSchedule();
-                  //GerarNotificacoes();
+                  GerarNotificacoes(true);
                   //  Modular.to.pushNamed('/cheganotificacao/1');
                   // _db.listAvisoStatus();
                 },
@@ -482,202 +484,221 @@ class _CalendarioPageState extends State<CalendarioPage>
     return ListView.builder(
         itemCount: _selectedEvents.length,
         itemBuilder: (ctx, index) {
-          Medicamento _medSelected = controllerCalendario.medicamentosLista
-              .firstWhere((med) => med.id == _selectedEvents[index]);
+          Medicamento _medSelected =
+              controllerCalendario.medicamentosLista.firstWhere(
+            (med) => med.id == _selectedEvents[index],
+          );
 
           var _avisosSelect = controllerCalendario
-              .calendarioSemana.medAvisoMap[_medSelected]
-              .where((ee) => ee.dia.day == _selectDay.day);
+                      .calendarioSemana.medAvisoMap[_medSelected] ==
+                  null
+              ? null
+              : controllerCalendario.calendarioSemana.medAvisoMap[_medSelected]
+                  .where((ee) => ee.dia.day == _selectDay.day);
 
           log('sssss' + _avisosSelect.toString());
 
           ///AGRUPAR POR HORA
 
-          return Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              margin:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      //color: blueTrans,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      ),
-                      // gradient: RadialGradient(
-                      //     colors: [Colors.white, pinkTrans, blueTrans],
-                      //     radius: 3),
-                      gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          //stops: [1, 2],
-                          colors: [
-                            blueTrans,
-                            pinkTrans,
-                            Colors.white,
-                            //  Colors.white,
-                            pinkTrans,
-                            blueTrans
-                          ]),
+          return _avisosSelect == null
+              ? Container()
+              : Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                    height: 45,
-                    width: double.infinity,
-                    child: Stack(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 4.0),
+                    child: Column(
                       children: <Widget>[
-                        Center(
-                          child: Text(
-                            _medSelected.nome,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: blueTrans.shade900,
-                              //  color: Colors.grey.shade600,
-                              // color: Colors.brown.shade500,
-                              //color: pinkTrans.shade500,
-                              letterSpacing: 1,
-                              fontSize: 16,
+                        Container(
+                          decoration: BoxDecoration(
+                            //color: blueTrans,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
                             ),
+                            // gradient: RadialGradient(
+                            //     colors: [Colors.white, pinkTrans, blueTrans],
+                            //     radius: 3),
+                            gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                //stops: [1, 2],
+                                colors: [
+                                  blueTrans,
+                                  pinkTrans,
+                                  Colors.white,
+                                  //  Colors.white,
+                                  pinkTrans,
+                                  blueTrans
+                                ]),
+                          ),
+                          height: 45,
+                          width: double.infinity,
+                          child: Stack(
+                            children: <Widget>[
+                              Center(
+                                child: Text(
+                                  _medSelected.nome,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueTrans.shade900,
+                                    //  color: Colors.grey.shade600,
+                                    // color: Colors.brown.shade500,
+                                    //color: pinkTrans.shade500,
+                                    letterSpacing: 1,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                  right: 10,
+                                  child: IconButton(
+                                      icon: Icon(
+                                        Icons.more_horiz,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: null))
+                            ],
                           ),
                         ),
-                        Positioned(
-                            right: 10,
-                            child: IconButton(
-                                icon: Icon(
-                                  Icons.more_horiz,
-                                  color: Colors.white,
+                        ListTile(
+                          title: Container(
+                            // color: Colors.amber,
+
+                            height: (_avisosSelect.length * 25).toDouble() + 30,
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  height: 30,
+                                  width: double.infinity,
+                                  //  color: Colors.grey.shade200,
+                                  child:
+                                      //Align(
+                                      // alignment: Alignment(-0.8, 0),
+                                      // child:
+                                      Text(
+                                    ' Dose(s) - ' +
+                                        // _avisosSelect
+                                        //     .elementAt(0)
+                                        //     .aviso
+                                        //     .qtd
+                                        //     .toString() +
+                                        ' ' +
+                                        (_medSelected.medida == null
+                                            ? 'ml'
+                                            : _medSelected.medida),
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                  // ),
                                 ),
-                                onPressed: null))
+                                Container(
+                                  height:
+                                      (_avisosSelect.length * 25).toDouble(),
+                                  child: ListView.builder(
+                                      itemCount: _avisosSelect.length,
+                                      itemBuilder: (ctx, indexAviso) {
+                                        AvisoStatus avisoSel =
+                                            _avisosSelect.elementAt(indexAviso);
+                                        log(' aviso sel :::::::' +
+                                            avisoSel.toString());
+                                        if (avisoSel.statusAvisoEnum ==
+                                            StatusAvisoEnum.antesDeAvisar) {
+                                          return Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Text('Ingerir às'),
+                                                Text(avisoSel.aviso.hora
+                                                        .toString() +
+                                                    ':' +
+                                                    avisoSel.aviso.minuto
+                                                        .toString())
+                                              ],
+                                            ),
+                                          );
+                                        } else if (avisoSel.statusAvisoEnum ==
+                                            StatusAvisoEnum.atrasado) {
+                                          return Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Text(
+                                                  'Deveria ter ingerido ás',
+                                                  style: TextStyle(
+                                                      color:
+                                                          Colors.red.shade400),
+                                                ),
+                                                Text(
+                                                  avisoSel.aviso.hora
+                                                          .toString() +
+                                                      ':' +
+                                                      avisoSel.aviso.minuto
+                                                          .toString(),
+                                                  style: TextStyle(
+                                                      color:
+                                                          Colors.red.shade400),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        } else if (avisoSel.statusAvisoEnum ==
+                                            StatusAvisoEnum.ingerido) {
+                                          return Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Text(
+                                                  'Ingerido às ',
+                                                  style: TextStyle(
+                                                      color: Colors
+                                                          .green.shade400),
+                                                ),
+                                                Text(
+                                                  avisoSel.aviso.hora
+                                                          .toString() +
+                                                      ':' +
+                                                      avisoSel.aviso.minuto
+                                                          .toString(),
+                                                  style: TextStyle(
+                                                      color: Colors
+                                                          .green.shade400),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                        return null;
+                                      }),
+                                )
+                              ],
+                            ),
+                          ),
+                          leading: Container(
+                            margin: EdgeInsets.only(
+                                top: (_avisosSelect.length * 4).toDouble()),
+                            child: Icon(IconData(_medSelected.icone,
+                                fontPackage: 'font_awesome_flutter',
+                                fontFamily: 'FontAwesomeSolid')),
+                          ),
+                          onTap: () => print(' tapped! bb'),
+                        )
                       ],
                     ),
                   ),
-                  ListTile(
-                    title: Container(
-                      // color: Colors.amber,
-
-                      height: (_avisosSelect.length * 25).toDouble() + 30,
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            height: 30,
-                            width: double.infinity,
-                            //  color: Colors.grey.shade200,
-                            child:
-                                //Align(
-                                // alignment: Alignment(-0.8, 0),
-                                // child:
-                                Text(
-                              ' Dose(s) - ' +
-                                  _avisosSelect
-                                      .elementAt(0)
-                                      .aviso
-                                      .qtd
-                                      .toString() +
-                                  ' ' +
-                                  (_medSelected.medida == null
-                                      ? 'ml'
-                                      : _medSelected.medida),
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                            // ),
-                          ),
-                          Container(
-                            height: (_avisosSelect.length * 25).toDouble(),
-                            child: ListView.builder(
-                                itemCount: _avisosSelect.length,
-                                itemBuilder: (ctx, indexAviso) {
-                                  AvisoStatus avisoSel =
-                                      _avisosSelect.elementAt(indexAviso);
-                                  log(' aviso sel :::::::' +
-                                      avisoSel.toString());
-                                  if (avisoSel.statusAvisoEnum ==
-                                      StatusAvisoEnum.antesDeAvisar) {
-                                    return Container(
-                                      margin: EdgeInsets.only(bottom: 5),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text('Ingerir às'),
-                                          Text(avisoSel.aviso.hora.toString() +
-                                              ':' +
-                                              avisoSel.aviso.minuto.toString())
-                                        ],
-                                      ),
-                                    );
-                                  } else if (avisoSel.statusAvisoEnum ==
-                                      StatusAvisoEnum.atrasado) {
-                                    return Container(
-                                      margin: EdgeInsets.only(bottom: 5),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            'Deveria ter ingerido ás',
-                                            style: TextStyle(
-                                                color: Colors.red.shade400),
-                                          ),
-                                          Text(
-                                            avisoSel.aviso.hora.toString() +
-                                                ':' +
-                                                avisoSel.aviso.minuto
-                                                    .toString(),
-                                            style: TextStyle(
-                                                color: Colors.red.shade400),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  } else if (avisoSel.statusAvisoEnum ==
-                                      StatusAvisoEnum.ingerido) {
-                                    return Container(
-                                      margin: EdgeInsets.only(bottom: 5),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            'Ingerido às ',
-                                            style: TextStyle(
-                                                color: Colors.green.shade400),
-                                          ),
-                                          Text(
-                                            avisoSel.aviso.hora.toString() +
-                                                ':' +
-                                                avisoSel.aviso.minuto
-                                                    .toString(),
-                                            style: TextStyle(
-                                                color: Colors.green.shade400),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                  return null;
-                                }),
-                          )
-                        ],
-                      ),
-                    ),
-                    leading: Container(
-                      margin: EdgeInsets.only(
-                          top: (_avisosSelect.length * 4).toDouble()),
-                      child: Icon(IconData(_medSelected.icone,
-                          fontPackage: 'font_awesome_flutter',
-                          fontFamily: 'FontAwesomeSolid')),
-                    ),
-                    onTap: () => print(' tapped! bb'),
-                  )
-                ],
-              ),
-            ),
-          );
+                );
         });
 
     // ListView(

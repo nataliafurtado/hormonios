@@ -129,7 +129,11 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('NOVO MEDICAMENTO'),
+          iconTheme: IconThemeData(
+            color: Colors.white, //change your color here
+          ),
+          title:
+              Text('NOVO MEDICAMENTO', style: TextStyle(color: Colors.white)),
         ),
         body: SingleChildScrollView(
           child: Form(
@@ -150,7 +154,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             child: Text(
                               'NOME DO MEDICAMENTO (*)',
                               style: TextStyle(
-                                  color: Colors.blue,
+                                  color: blueTrans.shade900,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -198,7 +202,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                               child: Text(
                                 'FREQUÊNCIA',
                                 style: TextStyle(
-                                    color: Colors.blue,
+                                    color: blueTrans.shade900,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -216,7 +220,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                     child: Text(
                                       'FREQUÊNCIA',
                                       style: TextStyle(
-                                          color: Colors.blue,
+                                          color: blueTrans.shade900,
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ),
@@ -272,7 +276,8 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                               _intervaloDeDias == null)
                                           ? ''
                                           : '${_intervaloDeDias.toString()} dias',
-                                      style: TextStyle(color: Colors.blue),
+                                      style:
+                                          TextStyle(color: blueTrans.shade900),
                                     )
                                   ],
                                 )
@@ -330,7 +335,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                         _intervaloDeDias == null)
                                     ? ''
                                     : '${_intervaloDeDias.toString()} dias',
-                                style: TextStyle(color: Colors.blue),
+                                style: TextStyle(color: blueTrans.shade900),
                               )
                             ],
                           ),
@@ -357,7 +362,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                             DateFormat.YEAR_MONTH_DAY, 'pt_Br')
                                         .format(_dataInicio),
                                     style: TextStyle(
-                                        color: Colors.blue,
+                                        color: blueTrans.shade900,
                                         fontWeight: FontWeight.bold),
                                   )
                                 ],
@@ -396,7 +401,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                         ? 'SEM DATA DE FIM'
                                         : '${_duracao.toString()} dias',
                                     style: TextStyle(
-                                        color: Colors.blue,
+                                        color: blueTrans.shade900,
                                         fontWeight: FontWeight.bold),
                                   ),
                                 )
@@ -430,7 +435,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             child: Text(
                               'HORÁRIO DOS AVISOS (*)',
                               style: TextStyle(
-                                  color: Colors.blue,
+                                  color: blueTrans.shade900,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -457,7 +462,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             child: Text(
                               'TIPO DO ÍCONE',
                               style: TextStyle(
-                                  color: Colors.blue,
+                                  color: blueTrans.shade900,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -483,7 +488,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                       child: Center(
                                         child: Icon(
                                           i,
-                                          color: Colors.blue,
+                                          color: blueTrans.shade900,
                                           size: 40,
                                         ),
                                       ));
@@ -517,7 +522,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             child: Text(
                               'INSTRUÇÕES',
                               style: TextStyle(
-                                  color: Colors.blue,
+                                  color: blueTrans.shade900,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -532,7 +537,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             child: Text(
                               'INSTRUÇÕES',
                               style: TextStyle(
-                                  color: Colors.blue,
+                                  color: blueTrans.shade900,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -569,7 +574,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                             .carregardosagem,
                                         style: TextStyle(
                                             fontSize: 16,
-                                            color: Colors.blue,
+                                            color: blueTrans.shade900,
                                             fontWeight: FontWeight.bold),
                                       )
                                     ],
@@ -621,7 +626,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                           maxLines: 4,
                                           style: TextStyle(
                                               fontSize: 16,
-                                              color: Colors.blue,
+                                              color: blueTrans.shade900,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       );
@@ -656,7 +661,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             child: Text(
                               'AVISAR ANTES QUE ACABE',
                               style: TextStyle(
-                                  color: Colors.blue,
+                                  color: blueTrans.shade900,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -670,7 +675,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             child: Text(
                               'AVISAR ANTES QUE ACABE',
                               style: TextStyle(
-                                  color: Colors.blue,
+                                  color: blueTrans.shade900,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -686,7 +691,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                 });
                               },
                               activeTrackColor: Colors.lightBlue.shade100,
-                              activeColor: Colors.blue,
+                              activeColor: blueTrans.shade900,
                             ),
                           ),
                           Container(
@@ -761,7 +766,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                                       // QUANDO RESTAREM XX DOSES
                                       style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.blue,
+                                          color: blueTrans.shade900,
                                           fontWeight: FontWeight.bold),
                                     )
                                   ],
@@ -949,7 +954,8 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                             ':' +
                             _avisos[indexAvisos].minuto.toString(),
                         style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
+                            color: blueTrans.shade900,
+                            fontWeight: FontWeight.bold),
                       ))),
                   trailing: InkWell(
                       onTap: () {
@@ -965,7 +971,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                       child: Container(
                           child: Text(
                         '${_avisos[indexAvisos].qtd.toString()} DOSE(S)',
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: blueTrans.shade900),
                       ))),
                 );
               },
@@ -980,7 +986,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     return AlertDialog(
       title: Text(
         "A cada quantos dias ?",
-        style: TextStyle(color: Colors.blue),
+        style: TextStyle(color: blueTrans.shade900),
       ),
       content: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1026,7 +1032,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     return AlertDialog(
       title: Text(
         "QUANTIDADE DE DIAS ?",
-        style: TextStyle(color: Colors.blue),
+        style: TextStyle(color: blueTrans.shade900),
       ),
       content: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1071,7 +1077,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     return AlertDialog(
       title: Text(
         "Quantas doses ?",
-        style: TextStyle(color: Colors.blue),
+        style: TextStyle(color: blueTrans.shade900),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1082,7 +1088,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 child: Icon(
                   Icons.navigation,
                   size: 20,
-                  color: Colors.blue,
+                  color: blueTrans.shade900,
                 ),
               )),
           Container(
@@ -1120,7 +1126,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 child: Icon(
                   Icons.swap_horiz,
                   size: 30,
-                  color: Colors.blue,
+                  color: blueTrans.shade900,
                 ),
               )),
         ],
@@ -1151,7 +1157,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     return AlertDialog(
       title: Text(
         "AVISO",
-        style: TextStyle(color: Colors.blue),
+        style: TextStyle(color: blueTrans.shade900),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1191,7 +1197,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
         return AlertDialog(
           title: Text(
             "OBSERVAÇÕES",
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(color: blueTrans.shade900),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1256,7 +1262,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
       return AlertDialog(
         title: Text(
           "Qual a dosagem ?",
-          style: TextStyle(color: Colors.blue),
+          style: TextStyle(color: blueTrans.shade900),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1343,7 +1349,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     return AlertDialog(
       title: Text(
         "Quantos avisos por dia ?",
-        style: TextStyle(color: Colors.blue),
+        style: TextStyle(color: blueTrans.shade900),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1354,7 +1360,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 child: Icon(
                   Icons.navigation,
                   size: 20,
-                  color: Colors.blue,
+                  color: blueTrans.shade900,
                 ),
               )),
           Container(
@@ -1418,7 +1424,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 child: Icon(
                   Icons.swap_horiz,
                   size: 30,
-                  color: Colors.blue,
+                  color: blueTrans.shade900,
                 ),
               )),
         ],
@@ -1452,7 +1458,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
     return AlertDialog(
       title: Text(
         "A cada quantas horas ?",
-        style: TextStyle(color: Colors.blue),
+        style: TextStyle(color: blueTrans.shade900),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1463,7 +1469,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 child: Icon(
                   Icons.navigation,
                   size: 20,
-                  color: Colors.blue,
+                  color: blueTrans.shade900,
                 ),
               )),
           Container(
@@ -1502,7 +1508,7 @@ class _NovoHormonioPageState extends State<NovoHormonioPage> {
                 child: Icon(
                   Icons.swap_horiz,
                   size: 30,
-                  color: Colors.blue,
+                  color: blueTrans.shade900,
                 ),
               )),
         ],

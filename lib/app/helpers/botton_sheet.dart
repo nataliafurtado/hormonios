@@ -5,7 +5,6 @@ import 'package:Projeto02/app/helpers/styles.dart';
 import 'package:Projeto02/app/modules/home/controller.dart';
 import 'package:Projeto02/app/modules/tomarmedicamento/tomarmedicamento_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class BottonsSheets {
@@ -308,17 +307,17 @@ class BottonsSheets {
   }
 
   static Future<DateTime> _selectTimeDataPicker(context) async {
-    DatePicker.showDateTimePicker(
-      context,
-      showTitleActions: true,
-      minTime: DateTime(2020, 1, 1),
-      maxTime: DateTime(2021, 5, 5),
-      onConfirm: (date) {
-        return date;
-      },
-      currentTime: DateTime.now(),
-      locale: LocaleType.pt,
-    );
+    // DatePicker.showDateTimePicker(
+    //   context,
+    //   showTitleActions: true,
+    //   minTime: DateTime(2020, 1, 1),
+    //   maxTime: DateTime(2021, 5, 5),
+    //   onConfirm: (date) {
+    //     return date;
+    //   },
+    //   currentTime: DateTime.now(),
+    //   locale: LocaleType.pt,
+    // );
     return null;
   }
 

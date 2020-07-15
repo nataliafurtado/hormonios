@@ -9,78 +9,82 @@ import 'package:Projeto02/app/models/notificacao.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class GerarNotificacoes {
-  GerarNotificacoes() {
-    iniciarGerarNotificacoes();
+  bool atualizarForcado;
+
+  GerarNotificacoes(bool atualizarForcado) {
+    iniciarGerarNotificacoes(atualizarForcado);
   }
 
   DBHelper _db = DBHelper();
   List<Medicamento> medicamentosLista = [];
 
-  void iniciarGerarNotificacoes() async {
-    // PEGAR OS MED DENTRO DAS DATAS DE INICIO E FIM
+  void iniciarGerarNotificacoes(atualizarForcado) async {
     medicamentosLista = await _db.getAllMedicamentosDentroDasDatas();
-    // HOJE
     final now = DateTime.now();
     final lastMidnight = new DateTime(now.year, now.month, now.day);
+
     // PARA CADA MEDICAMENTO
     for (var med in medicamentosLista) {
-      med.avisos = await _db.getAvisos(med.id);
-      // PARA CADA AVISO POR DIA
-      for (var aviso in med.avisos) {
-        List<AvisoStatus> listAvisoStatus = await med.notificacaoClass
-            .carrega30diasNotificacao(aviso, lastMidnight, med);
+      if (devoAtualizarAgora(med, now) || atualizarForcado) {
+        // PARA CADA AVISO POR DIA
+        for (var aviso in med.avisos) {
+          List<AvisoStatus> listAvisoStatus = await med.frequenciaClass
+              .carregaAvisoStatus(aviso, lastMidnight, med);
 
-        for (var i = 0; i < listAvisoStatus.length; i++) {
-          if (listAvisoStatus[i].notId == null) {
-            //VER SE JA TEM NOTIFICAÇÃO NESSE DIA E HORA SALVA NO BANCO
-            Notificacao notificacao =
-                await _db.getNotificacao(listAvisoStatus[i].dia);
-            //SE JÁ EXISTE NOTIFICAÇÃO ADD AVISOSTATUS
-            if (notificacao != null) {
-              log('SE JÁ EXISTE NOTIFICAÇÃO ADD AVISOSTATUS');
-              // AvisoStatus avisJaTinha = notificacao.avisosStatus
-              //     .firstWhere((notStat) => notStat.id == listAvisoStatus[i].id);
-              // // se não foi add
-              // if (avisJaTinha == null) {
-              notificacao.avisosStatus.add(listAvisoStatus[i]);
+          for (var i = 0; i < listAvisoStatus.length; i++) {
+            if (listAvisoStatus[i].notId == null) {
+              //VER SE JA TEM NOTIFICAÇÃO NESSE DIA E HORA SALVA NO BANCO
+              Notificacao notificacao =
+                  await _db.getNotificacao(listAvisoStatus[i].dia);
+              //SE JÁ EXISTE NOTIFICAÇÃO ADD AVISOSTATUS
+              if (notificacao != null) {
+                log('SE JÁ EXISTE NOTIFICAÇÃO ADD AVISOSTATUS');
+                // AvisoStatus avisJaTinha = notificacao.avisosStatus
+                //     .firstWhere((notStat) => notStat.id == listAvisoStatus[i].id);
+                // // se não foi add
+                // if (avisJaTinha == null) {
+                notificacao.avisosStatus.add(listAvisoStatus[i]);
+              } else {
+                // SENÃO TIVER CRIA ADD E SALVA
+                notificacao = Notificacao(
+                  dia: listAvisoStatus[i].dia,
+                  statusNotificacaoEnum: StatusNotificacoesEnum.enviada,
+                  avisosStatus: [listAvisoStatus[i]],
+                );
+                notificacao.avisosStatus.add(listAvisoStatus[i]);
+                notificacao.id = await _db.saveNotificacao(notificacao);
+              }
+              listAvisoStatus[i].notId = notificacao.id;
+              await _db.updateSimplesAvisoStatus(listAvisoStatus[i]);
             } else {
-              // SENÃO TIVER CRIA ADD E SALVA
-              notificacao = Notificacao(
-                dia: listAvisoStatus[i].dia,
-                statusNotificacaoEnum: StatusNotificacoesEnum.enviada,
-                avisosStatus: [listAvisoStatus[i]],
-              );
-              notificacao.avisosStatus.add(listAvisoStatus[i]);
-              notificacao.id = await _db.saveNotificacao(notificacao);
+              log('ja tem noti');
+              //confere e ver se precisa atualizar
             }
-            listAvisoStatus[i].notId = notificacao.id;
-            await _db.updateSimplesAvisoStatus(listAvisoStatus[i]);
-          } else {
-            log('ja tem noti');
-            //confere e ver se precisa atualizar
+          }
+
+          List<Notificacao> notificacoes = await _db.getNotificacao30Dias(now);
+
+          // PEGA ATODAS AS NOTIFICAÇÕES ATIVAS
+          List<PendingNotificationRequest> pendingNotificationRequests =
+              await Notifications.pending();
+
+          for (var i = 0; i < notificacoes.length; i++) {
+            // PROCURA SE JA EXIXTE NOTIFICAÇÃO NO SITEMA
+            var notifComMesmoId = pendingNotificationRequests.firstWhere(
+                (not) => not.id == notificacoes[i].id,
+                orElse: () => null);
+            // SE NÃO EXIXTE  CRIA
+            if (notifComMesmoId == null) {
+              log('CRIANDO  NOT NOVA');
+              await Notifications.notificaPorPushSchedule(
+                  notificacoes[i].dia, notificacoes[i].id);
+            } else {
+              log('Ja existe NOT');
+            }
           }
         }
-
-        List<Notificacao> notificacoes = await _db.getNotificacao30Dias(now);
-
-        // PEGA ATODAS AS NOTIFICAÇÕES ATIVAS
-        List<PendingNotificationRequest> pendingNotificationRequests =
-            await Notifications.pending();
-
-        for (var i = 0; i < notificacoes.length; i++) {
-          // PROCURA SE JA EXIXTE NOTIFICAÇÃO NO SITEMA
-          var notifComMesmoId = pendingNotificationRequests.firstWhere(
-              (not) => not.id == notificacoes[i].id,
-              orElse: () => null);
-          // SE NÃO EXIXTE  CRIA
-          if (notifComMesmoId == null) {
-            log('CRIANDO  NOT NOVA');
-            await Notifications.notificaPorPushSchedule(
-                notificacoes[i].dia, notificacoes[i].id);
-          } else {
-            log('Ja existe NOT');
-          }
-        }
+        med.dataUltimaAtualizacao = now;
+        _db.updateMedicamento(med, false);
       }
     }
 
@@ -89,8 +93,16 @@ class GerarNotificacoes {
 
     // se for do tipo periodo pega prozximas 10
   }
-}
 
+  bool devoAtualizarAgora(Medicamento med, DateTime now) {
+    DateTime quinzeDiasAtras = now.add(Duration(days: -15));
+    if (med.dataUltimaAtualizacao.isBefore(quinzeDiasAtras)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
 // log(medicamentosLista.length.toString() + ' frfrfrfrfref  frf frf r  ');
 //           log(i.toString() +
 //               '   :  ' +

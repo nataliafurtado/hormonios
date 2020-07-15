@@ -47,9 +47,9 @@ mixin _$CalendarioController on _CalendarioBase, Store {
   final _$carregarCalendarioAsyncAction = AsyncAction('carregarCalendario');
 
   @override
-  Future<void> carregarCalendario() {
+  Future<void> carregarCalendario(DateTime data) {
     return _$carregarCalendarioAsyncAction
-        .run(() => super.carregarCalendario());
+        .run(() => super.carregarCalendario(data));
   }
 
   final _$getMedicamentosAsyncAction = AsyncAction('getMedicamentos');

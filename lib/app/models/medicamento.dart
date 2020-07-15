@@ -22,8 +22,8 @@ class Medicamento {
   String horaReabasteciemnto;
   bool avisarReabastecimento;
   String frequencia;
-  CalendarioSemanaClass calendarioSemanaClass;
-  NotificacaoClass notificacaoClass;
+  Frequencia frequenciaClass;
+  DateTime dataUltimaAtualizacao;
 
   Medicamento(
       {this.id,
@@ -43,8 +43,7 @@ class Medicamento {
       this.horaReabasteciemnto,
       this.avisarReabastecimento,
       this.frequencia,
-      this.calendarioSemanaClass,
-      this.notificacaoClass});
+      this.dataUltimaAtualizacao});
 
   Medicamento.fromMap(Map map) {
     id = map['id'];
@@ -58,6 +57,9 @@ class Medicamento {
 
     dataInicio = DateTime.parse(map['dataInicio']);
     dataFim = map['dataFim'] == null ? null : DateTime.parse(map['dataFim']);
+    dataUltimaAtualizacao = map['dataUltimaAtualizacao'] == null
+        ? DateTime.now()
+        : DateTime.parse(map['dataUltimaAtualizacao']);
     icone = map['icone'];
     diasDasemana = map['diasDasemana'];
     intervaloDeDias = map['intervaloDeDias'];
@@ -80,11 +82,11 @@ class Medicamento {
     }
 
     if (map['frequencia'] == 'TODOS OS DIAS') {
-      calendarioSemanaClass = TodoDia();
-      notificacaoClass = TodoDia();
+      frequenciaClass = TodoDia();
+      // notificacaoClass = TodoDia();
     } else if (map['frequencia'] == 'DIAS ESPECÍFICOS DA SEMANA') {
-      calendarioSemanaClass = DiasDaSemana();
-      notificacaoClass = DiasDaSemana();
+      frequenciaClass = DiasDaSemana();
+      // notificacaoClass = DiasDaSemana();
     } else if (map['frequencia'] == 2) {}
   }
 
@@ -95,6 +97,9 @@ class Medicamento {
       //  avisos: avisos,
       'dataInicio': dataInicio.toIso8601String(),
       'dataFim': dataFim == null ? null : dataFim.toIso8601String(),
+      'dataUltimaAtualizacao': dataUltimaAtualizacao == null
+          ? null
+          : dataUltimaAtualizacao.toIso8601String(),
       'icone': icone,
       'diasDasemana': diasDasemana,
       'intervaloDeDias': intervaloDeDias,
@@ -130,20 +135,18 @@ class Medicamento {
 
   @override
   String toString() {
-    return "Medicamentos(id: $id, name: $nome)   $ativo $icone $dosagem $estoque ";
+    return "Medicamentos(id: $id, name: $nome)   $ativo $icone $dosagem $estoque $diasDasemana - $dataUltimaAtualizacao";
   }
 }
 
-abstract class CalendarioSemanaClass {
+abstract class Frequencia {
   Future<CalendarioSemana> carregaCalendarioSemana(
     DateTime segundaDessaSEmana,
     Medicamento medicamento,
     CalendarioSemana calendarioSemana,
   );
-}
 
-abstract class NotificacaoClass {
-  Future<List<AvisoStatus>> carrega30diasNotificacao(
+  Future<List<AvisoStatus>> carregaAvisoStatus(
     Aviso aviso,
     DateTime lastMidnight,
     Medicamento med,

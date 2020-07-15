@@ -107,4 +107,15 @@ mixin _$TomarmedicamentoController on _TomarmedicamentoControllerBase, Store {
       _$_TomarmedicamentoControllerBaseActionController.endAction(_$actionInfo);
     }
   }
+
+  @override
+  dynamic adiarTodos(DateTime novaHora) {
+    final _$actionInfo =
+        _$_TomarmedicamentoControllerBaseActionController.startAction();
+    try {
+      return super.adiarTodos(novaHora);
+    } finally {
+      _$_TomarmedicamentoControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
 }

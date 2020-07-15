@@ -69,7 +69,7 @@ abstract class _ListaHomoniosBase with Store {
 
   updateMedicamento() async {
     log('salvando');
-    int i = await _db.updateMedicamento(medicamentos);
+    int i = await _db.updateMedicamento(medicamentos, true);
     Notifications.refazerGerarNotificacoes();
     _db.apagarNotificacoesEAvisosStatus(medicamentos);
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:Projeto02/app/helpers/dp_helper.dart';
 import 'package:Projeto02/app/models/calendario_semana.dart';
 import 'package:Projeto02/app/models/medicamento.dart';
@@ -16,15 +18,18 @@ abstract class _CalendarioBase with Store {
   CalendarioSemana calendarioSemana = CalendarioSemana();
 
   @action
-  Future<void> carregarCalendario() async {
+  Future<void> carregarCalendario(DateTime segundaPassada) async {
     calendarioSemana = CalendarioSemana();
+    DateTime segundaDaSemana;
     await getMedicamentos();
 
-    // PEGA SEGUNDA DESSA SEMANA
     var aux = DateTime.now();
     DateTime hoje = new DateTime(aux.year, aux.month, aux.day);
-    DateTime segundaDessaSEmana =
-        hoje.subtract(Duration(days: hoje.weekday - 1));
+    if (segundaPassada == null) {
+      segundaDaSemana = hoje.subtract(Duration(days: hoje.weekday - 1));
+    } else {
+      segundaDaSemana = segundaPassada;
+    }
 
     // FOR LISTA DE MEDICAMENTOS
     for (var i1 = 0; i1 < medicamentosLista.length; i1++) {
@@ -44,9 +49,9 @@ abstract class _CalendarioBase with Store {
         }
 
         calendarioSemana = await medicamentosLista[i1]
-            .calendarioSemanaClass
+            .frequenciaClass
             .carregaCalendarioSemana(
-                segundaDessaSEmana, medicamentosLista[i1], calendarioSemana);
+                segundaDaSemana, medicamentosLista[i1], calendarioSemana);
       }
       //     }
       //   }
@@ -71,7 +76,7 @@ abstract class _CalendarioBase with Store {
 // //
 // //
 // for (var i2 = 0; i2 < 7; i2++) {
-//   DateTime dia = segundaDessaSEmana.add(Duration(days: i2));
+//   DateTime dia = segundaDaSemana.add(Duration(days: i2));
 
 //   List<Aviso> avisosDesseMed =
 //       await _db.getAvisos(medicamentosLista[i1].id);
@@ -100,7 +105,7 @@ abstract class _CalendarioBase with Store {
 //    else if (medicamentosLista[i1].frequencia == bundle.frequencia[1]) {
 // List list2 = jsonDecode(medicamentosLista[i1].diasDasemana);
 // for (var i2 = 0; i2 < list2.length; i2++) {
-//   DateTime dia = segundaDessaSEmana.add(Duration(days: i2));
+//   DateTime dia = segundaDaSemana.add(Duration(days: i2));
 //   if (list2[i2]) {
 //     List<Aviso> avisosDesseMed =
 //         await _db.getAvisos(medicamentosLista[i1].id);
@@ -136,7 +141,7 @@ abstract class _CalendarioBase with Store {
 //   // ou pega dfo ultimo ou com base data de inicio
 //  // List list2 = jsonDecode(medicamentosLista[i1].diasDasemana);
 //   for (var i2 = 0; i2 < list2.length; i2++) {
-//     DateTime dia = segundaDessaSEmana.add(Duration(days: i2));
+//     DateTime dia = segundaDaSemana.add(Duration(days: i2));
 //     if (list2[i2]) {
 //       List<Aviso> avisosDesseMed =
 //           await _db.getAvisos(medicamentosLista[i1].id);
